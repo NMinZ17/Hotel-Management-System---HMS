@@ -1,0 +1,199 @@
+{
+  "repository": "NMinZ17/Hotel-Management-System---HMS",
+  "master": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/1",
+  "observed": "06/11/2026",
+  "tasks": [
+    {
+      "code": "HMS-W1-MINH",
+      "week": 1,
+      "owner": "NMinZ17",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/2",
+      "number": 2,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W1-TRANG",
+      "week": 1,
+      "owner": "maitrang1112",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/3",
+      "number": 3,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W1-LINH",
+      "week": 1,
+      "owner": "maingoclinh1681",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/4",
+      "number": 4,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W1-THU",
+      "week": 1,
+      "owner": "thanhthu-1666",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/5",
+      "number": 5,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W2-MINH",
+      "week": 2,
+      "owner": "NMinZ17",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/6",
+      "number": 6,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W2-TRANG",
+      "week": 2,
+      "owner": "maitrang1112",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/7",
+      "number": 7,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W2-LINH",
+      "week": 2,
+      "owner": "maingoclinh1681",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/8",
+      "number": 8,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W2-THU",
+      "week": 2,
+      "owner": "thanhthu-1666",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/9",
+      "number": 9,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W3-MINH",
+      "week": 3,
+      "owner": "NMinZ17",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/10",
+      "number": 10,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W3-TRANG",
+      "week": 3,
+      "owner": "maitrang1112",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/11",
+      "number": 11,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W3-LINH",
+      "week": 3,
+      "owner": "maingoclinh1681",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/12",
+      "number": 12,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W3-THU",
+      "week": 3,
+      "owner": "thanhthu-1666",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/13",
+      "number": 13,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W4-MINH",
+      "week": 4,
+      "owner": "NMinZ17",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/14",
+      "number": 14,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W4-TRANG",
+      "week": 4,
+      "owner": "maitrang1112",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/15",
+      "number": 15,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W4-LINH",
+      "week": 4,
+      "owner": "maingoclinh1681",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/16",
+      "number": 16,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W4-THU",
+      "week": 4,
+      "owner": "thanhthu-1666",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/17",
+      "number": 17,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W5-MINH",
+      "week": 5,
+      "owner": "NMinZ17",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/18",
+      "number": 18,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W5-TRANG",
+      "week": 5,
+      "owner": "maitrang1112",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/19",
+      "number": 19,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W5-LINH",
+      "week": 5,
+      "owner": "maingoclinh1681",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/20",
+      "number": 20,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W5-THU",
+      "week": 5,
+      "owner": "thanhthu-1666",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/21",
+      "number": 21,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W6-MINH",
+      "week": 6,
+      "owner": "NMinZ17",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/22",
+      "number": 22,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W6-TRANG",
+      "week": 6,
+      "owner": "maitrang1112",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/23",
+      "number": 23,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W6-LINH",
+      "week": 6,
+      "owner": "maingoclinh1681",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/24",
+      "number": 24,
+      "initial_status": "Chưa bắt đầu"
+    },
+    {
+      "code": "HMS-W6-THU",
+      "week": 6,
+      "owner": "thanhthu-1666",
+      "url": "https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/25",
+      "number": 25,
+      "initial_status": "Chưa bắt đầu"
+    }
+  ]
+}

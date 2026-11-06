@@ -1,0 +1,18 @@
+# Local environments and secrets
+.env
+.env.*
+!.env.example
+**/.venv/
+**/venv/
+**/node_modules/
+**/dist/
+**/__pycache__/
+*.py[cod]
+**/.pytest_cache/
+*.log
+*.dump
+*.backup
+*.sql.gz
+*.sqlite3
+.DS_Store
+Thumbs.db
