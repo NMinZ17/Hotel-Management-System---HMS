@@ -1,3 +1,4 @@
+# hai khách (id 1 và 2) cùng đặt phòng 101 từ 20 đến 22/12/2026.
 from __future__ import annotations
 
 import os
