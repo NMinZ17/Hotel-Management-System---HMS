@@ -2,7 +2,7 @@
 
 GitHub: NMinZ17. Vai trò: Backend, tích hợp và release. Reviewer chính: maitrang1112.
 
-Trạng thái ban đầu 06/11/2026: cả sáu công việc chưa bắt đầu. Lịch 09/11–20/12 là đề xuất; 16–20 giờ/tuần gồm học, thực hiện, review và tích hợp. Chỉ đánh dấu xong khi có minh chứng, không theo số commit.
+Lịch 09/11–20/12/2026; 16–20 giờ/tuần gồm thực hiện, kiểm tra và tích hợp. Backend tuần 1 đã có [hướng dẫn chạy](../backend-week1.md) và [kết quả kiểm thử](../testing/backend-week1.md).
 
 **Học để làm ngay**
 
@@ -36,9 +36,10 @@ Phụ thuộc: có thể bắt đầu ngay; phối hợp dữ liệu/hợp đồ
 
 **Điều kiện nghiệm thu**
 
-- [ ] GET /api/health trả 200; GET /api/rooms đọc DB thật, không phải danh sách cố định trong code.
+- [x] GET /api/health trả 200; GET /api/rooms đọc PostgreSQL thật.
 - [ ] Thay dữ liệu seed rồi tải lại thì frontend hiển thị dữ liệu mới.
-- [ ] requirements có phiên bản đã kiểm tra; có PR và hướng dẫn chạy.
+- [x] Requirements có phiên bản đã kiểm tra và hướng dẫn chạy.
+- [ ] PR được review và merge sau khi ghép giao diện, Trang chạy lại.
 
 **Cập nhật GitHub**
 
@@ -201,3 +202,4 @@ Mỗi buổi comment đã làm, kiểm tra, blocker và bước tiếp theo vào
 **Buổi làm đầu tiên**
 
 Clone repo, mở Issue tuần 1, tạo nhánh riêng, kiểm tra công cụ. Thực hiện bước nhỏ đầu tiên rồi comment kết quả thực. Nếu vướng quá một buổi, gửi log/request/dữ liệu mẫu vào Issue để nhóm hỗ trợ.
+

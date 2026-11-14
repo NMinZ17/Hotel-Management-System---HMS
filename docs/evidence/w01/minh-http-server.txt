@@ -1,0 +1,14 @@
+INFO:     Started server process [17592]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:54254 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54255 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:54255 - "GET /api/rooms HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/rooms?room_type_id=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/rooms HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/rooms?room_type_id=1%3B+DROP+TABLE+room%3B-- HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:54255 - "GET /api/rooms HTTP/1.1" 200 OK
+Rooms database request failed (UndefinedTable)
+INFO:     127.0.0.1:54255 - "GET /api/rooms HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:54255 - "GET /openapi.json HTTP/1.1" 200 OK

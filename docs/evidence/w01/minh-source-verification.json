@@ -1,0 +1,65 @@
+{
+  "tested_at": "2026-11-14T21:57:33.468304+07:00",
+  "scope": "HMS week-one backend; real Uvicorn HTTP and isolated PostgreSQL. React integration and other members' machines are pending verification.",
+  "source": {
+    "repository": "NMinZ17/Hotel-Management-System---HMS",
+    "ref": "trang/checkpoint_1",
+    "commit": "82f9a4339cb54b96ecb3a07a0c518ea395365eb2",
+    "schema_blob": "2c546cfafe82e1b4d1c55dab1ac963a947950e15",
+    "seed_blob": "96a6342f3620435c3cc83e1099c181acafcc89f8"
+  },
+  "environment": {
+    "python": "3.14.8",
+    "postgresql": "18.6",
+    "packages": {
+      "fastapi": "0.162.2",
+      "uvicorn": "0.54.0",
+      "psycopg": "3.3.8",
+      "pydantic": "2.14.3",
+      "python-dotenv": "1.2.1",
+      "httpx": "0.28.1"
+    }
+  },
+  "checks": [
+    {
+      "check": "Trang schema/seed: 28 tables created in a fresh isolated schema",
+      "result": "PASS"
+    },
+    {
+      "check": "Uvicorn real HTTP: GET /api/health returns 200",
+      "result": "PASS"
+    },
+    {
+      "check": "GET / redirects to the API documentation",
+      "result": "PASS"
+    },
+    {
+      "check": "GET /api/rooms returns all 4 rooms from Trang's seed with nested room_type",
+      "result": "PASS"
+    },
+    {
+      "check": "Real HTTP response includes the configured React CORS origin",
+      "result": "PASS"
+    },
+    {
+      "check": "room_type_id=2 reads the seeded Deluxe room",
+      "result": "PASS"
+    },
+    {
+      "check": "A committed SQL update is visible in the next HTTP request, without restarting API",
+      "result": "PASS"
+    },
+    {
+      "check": "Injection-shaped filter returns 422 and the catalogue remains readable",
+      "result": "PASS"
+    },
+    {
+      "check": "A missing database table returns a safe 503 response",
+      "result": "PASS"
+    },
+    {
+      "check": "OpenAPI documentation exposes both week-one endpoints",
+      "result": "PASS"
+    }
+  ]
+}

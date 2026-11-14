@@ -2,14 +2,21 @@
 
 Website quản lý khách sạn theo thiết kế 28 bảng, do nhóm bốn thành viên xây dựng từ số 0 với React, FastAPI và PostgreSQL.
 
-**Tiến độ ghi nhận ngày 06/11/2026**
+**Backend tuần 1**
 
-- Tổ chức công việc: đã tạo kế hoạch, hướng dẫn cá nhân, quy trình GitHub và 24 Issue có người phụ trách.
-- Phát triển phần mềm: **0/24 công việc tuần được nghiệm thu; tất cả Chưa bắt đầu**. Chưa có backend/frontend/database chạy được được xác nhận trong repo.
-- Chưa có kết quả kiểm thử, benchmark hoặc triển khai được xác nhận. Repository hiện chứa bộ tài liệu khởi động; các file code trong hướng dẫn là việc cần tạo.
-- Lịch đề xuất: 09/11–20/12/2026; 16–20 giờ/người/tuần, bao gồm học, thực hiện, review và tích hợp.
+FastAPI đã có `GET /api/health` và `GET /api/rooms` đọc PostgreSQL, lọc loại phòng, phân trang và xử lý lỗi. Schema/seed của Trang được lưu trong `database/`, có 28 bảng và 4 phòng mẫu. Kết quả kiểm tra và các việc cần phối hợp nằm trong [báo cáo kiểm thử backend](docs/testing/backend-week1.md).
 
-Theo dõi tại [Issue tổng #1](https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/1). Các trạng thái và báo cáo được cập nhật thủ công theo minh chứng; không có bot tự đồng bộ.
+**Chạy dự án**
+
+Thiết lập Python, database và `.env` theo [hướng dẫn backend](docs/backend-week1.md#thiết-lập-lần-đầu). Mỗi lần chạy, mở PowerShell tại gốc repository:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\backend\scripts\start.ps1
+```
+
+API: [health](http://127.0.0.1:8000/api/health), [danh sách phòng](http://127.0.0.1:8000/api/rooms), [Swagger UI](http://127.0.0.1:8000/docs). Xem [hợp đồng API](docs/api-contract.md) để ghép frontend.
+
+Theo dõi công việc tại [Issue tổng #1](https://github.com/NMinZ17/Hotel-Management-System---HMS/issues/1).
 
 **Mỗi thành viên bắt đầu ở đây**
 
@@ -25,7 +32,7 @@ Theo dõi tại [Issue tổng #1](https://github.com/NMinZ17/Hotel-Management-Sy
 1. [Cài công cụ và chạy luồng đầu tiên](docs/getting-started.md).
 2. [Cách nhận việc, commit, mở PR và cập nhật tiến độ](docs/github-workflow.md).
 3. Hướng dẫn cá nhân trong bảng trên: mỗi tuần có thứ tự làm, phụ thuộc, file dự kiến, tiêu chí và minh chứng.
-4. [Kế hoạch 6 tuần từ số 0](docs/ke-hoach-6-tuan.md), [hợp đồng tích hợp tạm](docs/api-contract.md), [cách lưu minh chứng](docs/testing/evidence-guide.md).
+4. [Kế hoạch 6 tuần](docs/ke-hoach-6-tuan.md), [hợp đồng API](docs/api-contract.md), [cách lưu minh chứng](docs/testing/evidence-guide.md).
 
 **Các mốc tuần**
 
@@ -44,17 +51,15 @@ Theo dõi tại [Issue tổng #1](https://github.com/NMinZ17/Hotel-Management-Sy
 
 Nhà hàng/kho riêng, lịch vui chơi/spa, đa khách sạn và cổng thanh toán thật nằm ngoài bản rút gọn. Thanh toán là ghi nhận tiền mặt/chuyển khoản; hóa đơn là nội bộ.
 
-**Vị trí mã nguồn dự kiến**
+**Cấu trúc dự án**
 
 ```text
 backend/       FastAPI, nghiệp vụ và kiểm thử — Minh, Trang phối hợp dữ liệu
-frontend/      Một ứng dụng React dùng chung — Linh và Thư
-database/      SQL migration, seed, reports, benchmarks — Trang
-infra/         VM và NGINX — Minh/Thư/Trang theo thành phần
+database/      Schema và seed PostgreSQL — Trang
 docs/          Hướng dẫn, kế hoạch, báo cáo và minh chứng
 ```
 
-Các thư mục thực thi sẽ được tạo trong PR tương ứng. Tuần 1 không yêu cầu làm xong mọi màn: Trang seed phòng → Minh đọc DB qua API → Linh hiển thị → Thư kiểm tra và tổng hợp lỗi.
+Frontend React do Linh và Thư phối hợp trong cùng một ứng dụng; cấu hình VM/NGINX được bổ sung theo kế hoạch triển khai. Luồng tuần 1: Trang seed phòng → Minh đọc DB qua API → Linh hiển thị → Thư kiểm tra và tổng hợp lỗi.
 
 **Quy tắc nghiệm thu**
 
@@ -66,3 +71,4 @@ Nếu cuối tuần 2 chưa đặt/hủy qua UI–API–DB thật, cần công b
 
 - [Hồ sơ phân công của nhóm](https://docs.google.com/document/d/1EurWhqdxOvEVQbDl4tMRdwi2VkauwpOoXqa5YHxWEAY/edit?tab=t.0). Hồ sơ gốc còn mô tả 42 bảng; kế hoạch này theo bản rút gọn 28.
 - Tài liệu nhóm: HMS_ERD_28_bang.pdf và Bao_cao_HMS_IEEE.pdf. Hai tài liệu thiết kế không phải bằng chứng phần mềm đã chạy.
+
