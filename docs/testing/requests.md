@@ -4,391 +4,256 @@
 **Issue:** #5 – Thiết kế layout chung, request thử và kiểm tra VM  
 **Người phụ trách:** Đỗ Thị Thanh Thư  
 **Reviewer:** maingoclinh1681  
-**Tuần thực hiện:** Week 1 (09/11/2026 – 15/11/2026)  
-**Trạng thái:** Draft – Kế hoạch kiểm thử, chưa xác nhận kết quả thực tế  
-**Công cụ:** Postman  
-**Backend dự kiến:** FastAPI
+**Tuần thực hiện:** 09/11/2026 – 15/11/2026  
+**Cập nhật lần cuối:** 14/11/2026  
+**Trạng thái:** Draft – Chuẩn bị kịch bản, chờ xác nhận và kiểm thử với backend
 
 ---
 
 ## 1. Mục đích
 
-Tài liệu xác định các request và tình huống kiểm thử API cơ bản trong tuần 1, phục vụ quá trình tích hợp frontend, backend và database của Hotel Management System (HMS).
+Tài liệu này ghi lại kế hoạch kiểm thử các API cơ bản của hệ thống HMS trong tuần 1, sử dụng Postman để gửi request và kiểm tra response.
 
-Phạm vi kiểm thử tập trung vào hai endpoint được đề xuất trong `docs/api-contract.md`:
+Các mục tiêu chính:
 
-- `GET /api/health`: kiểm tra trạng thái hoạt động của backend.
-- `GET /api/rooms`: kiểm tra khả năng lấy danh sách phòng từ backend.
+- Kiểm tra khả năng kết nối giữa Postman và backend.
+- Kiểm tra response của API sức khỏe hệ thống và API danh sách phòng khi backend hỗ trợ.
+- Ghi nhận mã HTTP, cấu trúc response và lỗi phát sinh.
+- Phân biệt kết quả mong đợi với kết quả thực tế.
+- Cung cấp bằng chứng kiểm thử để nhóm phối hợp xử lý.
 
-Ngoài ra, tài liệu đề xuất kiểm tra trường hợp danh sách phòng rỗng và trường hợp không thể kết nối backend.
+**Lưu ý:** Tài liệu này là kế hoạch kiểm thử. Không xem các API được đề xuất trong tài liệu API contract là API đã triển khai nếu chưa kiểm tra trực tiếp trên backend.
 
-Tài liệu này là kế hoạch kiểm thử. Chỉ cập nhật kết quả sau khi request được thực hiện trên môi trường thực tế.
+## 2. Phạm vi kiểm thử
 
-## 2. Phạm vi và nguyên tắc kiểm thử
-
-### 2.1. Phạm vi
-
-| Nội dung | Phạm vi tuần 1 |
+| Nội dung | Phạm vi |
 |---|---|
-| Kiểm tra kết nối backend | Có |
-| Kiểm tra endpoint health | Có |
-| Kiểm tra lấy danh sách phòng | Có |
-| Kiểm tra danh sách phòng rỗng | Có, khi có dữ liệu thử nghiệm phù hợp |
-| Kiểm tra lỗi kết nối backend | Có |
-| Kiểm tra giao diện hiển thị dữ liệu API | Sau khi frontend được merge và tích hợp |
-| Kiểm thử nghiệp vụ đặt phòng, thanh toán, phân quyền | Không thuộc phạm vi kiểm thử API cơ bản tuần 1 |
+| Công cụ | Postman |
+| Backend | FastAPI |
+| Địa chỉ backend dự kiến | `http://localhost:8000` |
+| API kiểm tra sức khỏe | `GET /api/health` |
+| API danh sách phòng | `GET /api/rooms` |
+| Kiểm tra lỗi kết nối | Backend chưa chạy hoặc không truy cập được |
+| Kiểm tra dữ liệu rỗng | API danh sách phòng không có dữ liệu |
 
-Các kiểm thử nghiệp vụ T01–T08 và những kiểm thử bổ sung được thực hiện theo kế hoạch, issue và evidence guide tương ứng của dự án.
+Các endpoint `/api/health` và `/api/rooms` được ghi nhận trong tài liệu API contract là endpoint dự kiến. Cần xác nhận với thành viên phụ trách backend trước khi kết luận chúng đã được triển khai.
 
-### 2.2. Nguyên tắc
+## 3. Chuẩn bị kiểm thử
 
-- Căn cứ vào API contract đã được nhóm thống nhất.
-- Không tự giả định cấu trúc response khi backend chưa xác nhận.
-- Không tự ý thay đổi dữ liệu trên database dùng chung.
-- Không sử dụng dữ liệu khách hàng thật hoặc thông tin nhạy cảm.
-- Không ghi nhận request là đã kiểm thử nếu chưa thực sự chạy.
-- Phân biệt rõ kết quả kỳ vọng và kết quả thực tế.
-- Khi phát hiện lỗi, ghi lại request, thời điểm, môi trường, thông báo lỗi và các bước tái hiện.
+### 3.1. Điều kiện cần
 
-## 3. Cấu hình kiểm thử
+- Đã cài đặt Postman.
+- Backend FastAPI đã được cài đặt và khởi chạy.
+- Đã xác nhận địa chỉ và cổng backend đang sử dụng.
+- Đã thống nhất endpoint và cấu trúc response với thành viên phụ trách backend.
 
-### 3.1. Công cụ và môi trường
+### 3.2. Cấu hình request
 
-| Thuộc tính | Giá trị |
+Nếu backend chạy tại máy cá nhân theo cấu hình dự kiến:
+
+```text
+Base URL: http://localhost:8000
+```
+
+Các request sử dụng Base URL:
+
+```text
+{{baseUrl}}/api/health
+{{baseUrl}}/api/rooms
+```
+
+Có thể tạo biến môi trường trong Postman:
+
+| Variable | Initial value |
 |---|---|
-| HTTP client | Postman |
-| Backend framework | FastAPI |
-| Base URL local dự kiến | `http://127.0.0.1:8000` |
-| API prefix | `/api` |
-| Database | PostgreSQL |
-| Hệ điều hành máy dự kiến kiểm thử | Windows |
-| Môi trường triển khai | Local hoặc VM theo điều kiện thực tế |
-| Trạng thái kiểm thử | Chưa thực hiện |
+| `baseUrl` | `http://localhost:8000` |
 
-Base URL local chỉ là địa chỉ dự kiến khi backend chạy trên chính máy kiểm thử. Nếu backend chạy trên máy khác hoặc VM, phải sử dụng địa chỉ thực tế được nhóm cung cấp.
+Nếu backend sử dụng địa chỉ hoặc cổng khác, cần cập nhật biến này theo cấu hình thực tế.
 
-### 3.2. Cấu hình biến môi trường trong Postman
+## 4. Danh sách kịch bản kiểm thử
 
-Tạo một Environment trong Postman để quản lý các thông tin cấu hình dùng chung cho các request API.
+### API-W1-01: Kiểm tra trạng thái backend
 
-Các biến cần khai báo:
+**Mục đích:** Kiểm tra backend có phản hồi request hay không.
 
-| Variable | Initial Value | Current Value |
-|---|---|---|
-| `base_url` | `http://127.0.0.1:8000` | `http://127.0.0.1:8000` |
-| `api_prefix` | `/api` | `/api` |
+- Method: `GET`
+- URL dự kiến: `{{baseUrl}}/api/health`
+- Body: Không có.
 
-Trong đó:
+**Kết quả mong đợi:**
 
-- `base_url`: Địa chỉ máy chủ Backend. Giá trị trên chỉ áp dụng khi Backend chạy local trên chính máy kiểm thử.
-- `api_prefix`: Tiền tố đường dẫn API theo cấu hình dự kiến của dự án.
+- Backend phản hồi thành công.
+- HTTP status dự kiến: `200 OK`.
+- Response có cấu trúc thể hiện trạng thái hoạt động của hệ thống theo API contract đã thống nhất.
 
-**Cách sử dụng biến trong request:**
+**Kết quả thực tế:**
 
-- Kiểm tra trạng thái Backend:
+- Trạng thái: Chưa chạy.
+- HTTP status: Chưa ghi nhận.
+- Response: Chưa ghi nhận.
+- Nguyên nhân: Chưa xác nhận endpoint đã được triển khai trên backend.
 
-  `{{base_url}}{{api_prefix}}/health`
+### API-W1-02: Lấy danh sách phòng
 
-- Lấy danh sách phòng:
+**Mục đích:** Kiểm tra API trả về danh sách phòng và cấu trúc dữ liệu.
 
-  `{{base_url}}{{api_prefix}}/rooms`
+- Method: `GET`
+- URL dự kiến: `{{baseUrl}}/api/rooms`
+- Body: Không có.
 
-**URL thực tế khi sử dụng cấu hình local:**
+**Kết quả mong đợi:**
 
-- Health: `http://127.0.0.1:8000/api/health`
-- Rooms: `http://127.0.0.1:8000/api/rooms`
+- Backend phản hồi thành công khi endpoint được triển khai.
+- HTTP status dự kiến: `200 OK`.
+- Response trả về danh sách phòng theo cấu trúc API contract.
+- Các trường dữ liệu cần được thống nhất với frontend, đặc biệt là mã phòng, số phòng, tầng, loại phòng và trạng thái phòng.
 
-Khi Backend được triển khai trên máy khác hoặc VM, cần cập nhật `base_url` theo địa chỉ thực tế do nhóm cung cấp. Nếu API prefix thay đổi, cập nhật biến `api_prefix` theo cấu hình Backend đã xác nhận.
+**Kết quả thực tế:**
 
-Không lưu mật khẩu, token hoặc thông tin kết nối database thật vào tài liệu hay repository.
+- Trạng thái: Chưa chạy.
+- HTTP status: Chưa ghi nhận.
+- Response: Chưa ghi nhận.
+- Nguyên nhân: Chưa xác nhận endpoint đã được triển khai và có dữ liệu kiểm thử.
 
-## 4. Danh sách request kiểm thử
+### API-W1-03: Kiểm tra danh sách phòng rỗng
 
-Lưu ý về trạng thái API: Hai endpoint GET /api/health và GET /api/rooms hiện được đề xuất trong docs/api-contract.md nhưng chưa xác nhận đã được triển khai trong mã nguồn Backend. Các request dưới đây là kế hoạch kiểm thử, chỉ thực hiện sau khi thành viên phụ trách Backend xác nhận endpoint đã sẵn sàng.
+**Mục đích:** Kiểm tra API xử lý trường hợp hệ thống chưa có phòng nào.
 
-### API-W1-01 – Kiểm tra trạng thái backend
+- Method: `GET`
+- URL dự kiến: `{{baseUrl}}/api/rooms`
+- Body: Không có.
 
-**Mục đích:** Xác nhận backend có thể nhận và xử lý request.
+**Kết quả mong đợi:**
 
-**Trạng thái hiện tại:** Bị chặn – Chờ Backend xác nhận endpoint GET /api/health đã được triển khai.
+- API phản hồi theo quy ước đã thống nhất.
+- Nếu API trả về danh sách rỗng, response có thể chứa mảng `[]`.
+- Frontend cần có trạng thái thông báo chưa có dữ liệu, thay vì hiển thị lỗi hoặc bảng trống không giải thích.
 
-| Thuộc tính | Giá trị |
-|---|---|
-| Method | GET |
-| Endpoint | `/api/health` |
-| URL dự kiến | `{{base_url}}/api/health` |
-| Request body | Không có |
-| Điều kiện trước | Backend đã được khởi động |
+**Kết quả thực tế:**
 
-**Các bước thực hiện:**
+- Trạng thái: Chưa chạy.
+- HTTP status: Chưa ghi nhận.
+- Response: Chưa ghi nhận.
+- Nguyên nhân: Chưa có môi trường backend và dữ liệu phù hợp để kiểm thử trường hợp này.
 
-1. Khởi động backend theo hướng dẫn trong README.
-2. Mở Postman.
-3. Chọn method GET.
-4. Nhập URL của endpoint.
-5. Gửi request.
-6. Ghi nhận HTTP status và response thực tế.
+### API-W1-04: Kiểm tra lỗi kết nối backend
 
-**Kết quả kỳ vọng:**
+**Mục đích:** Kiểm tra cách nhận biết và ghi nhận lỗi khi backend không hoạt động hoặc không thể truy cập.
 
-- Backend nhận được request.
-- API phản hồi thành công theo thiết kế health check đã được backend xác nhận.
-- Response có cấu trúc phù hợp với API contract chính thức.
+- Method: `GET`
+- URL: `{{baseUrl}}/api/health`
+- Điều kiện: Backend không chạy hoặc địa chỉ kết nối không hợp lệ.
 
-**Kết quả thực tế:** Chưa kiểm thử.
+**Kết quả mong đợi:**
 
-**HTTP status thực tế:** Chưa ghi nhận.
+- Request không nhận được response thành công.
+- Postman hiển thị lỗi kết nối phù hợp.
+- Ghi nhận thông báo lỗi, thời điểm kiểm thử và cấu hình request.
+- Frontend cần có thông báo lỗi kết nối dễ hiểu khi gặp tình huống tương tự.
 
----
+**Kết quả thực tế:**
 
-### API-W1-02 – Lấy danh sách phòng
+- Trạng thái: Chưa chạy.
+- Lỗi thực tế: Chưa ghi nhận.
+- Nguyên nhân: Chưa thực hiện kiểm thử có chủ đích trong môi trường phù hợp.
 
-**Mục đích:** Kiểm tra khả năng lấy danh sách phòng từ backend để phục vụ frontend.
+## 5. Bảng tổng hợp kết quả
 
-**Trạng thái hiện tại:** Bị chặn – Chờ Backend xác nhận endpoint GET /api/rooms đã được triển khai và cung cấp cấu trúc response chính thức.
-
-| Thuộc tính | Giá trị |
-|---|---|
-| Method | GET |
-| Endpoint | `/api/rooms` |
-| URL dự kiến | `{{base_url}}/api/rooms` |
-| Request body | Không có |
-| Điều kiện trước | Backend hoạt động và database có dữ liệu phòng thử nghiệm |
-
-**Các bước thực hiện:**
-
-1. Khởi động PostgreSQL và database HMS theo hướng dẫn của nhóm.
-2. Đảm bảo dữ liệu phòng thử nghiệm đã được khởi tạo.
-3. Khởi động backend.
-4. Gửi request GET đến `/api/rooms`.
-5. Kiểm tra HTTP status và nội dung response.
-
-**Các trường dữ liệu dự kiến theo API contract:**
-
-| Trường | Ý nghĩa |
-|---|---|
-| `room_id` | Mã phòng |
-| `room_number` | Số phòng |
-| `room_type_id` | Mã loại phòng |
-| `housekeeping_status` | Trạng thái vệ sinh |
-| `maintenance_status` | Trạng thái bảo trì |
-
-**Kết quả kỳ vọng:**
-
-- API trả về danh sách phòng theo cấu trúc response đã được nhóm xác nhận.
-- Các trường dữ liệu cần thiết được trả về đúng theo API contract.
-- Dữ liệu phản ánh thông tin trong database.
-- Không trả về những thông tin nội bộ hoặc nhạy cảm không cần thiết cho giao diện.
-
-**Lưu ý:**
-
-API contract hiện mới đề xuất các trường dữ liệu. Cấu trúc response chính thức (danh sách trực tiếp hay object bao ngoài), phân trang và các trường bổ sung cần được backend xác nhận trước khi frontend tích hợp.
-
-**Kết quả thực tế:** Chưa kiểm thử.
-
-**HTTP status thực tế:** Chưa ghi nhận.
-
----
-
-### API-W1-03 – Kiểm tra danh sách phòng rỗng
-
-**Mục đích:** Kiểm tra cách backend xử lý khi không có phòng để trả về.
-
-**Trạng thái hiện tại:** Bị chặn – Chờ Backend xác nhận endpoint GET /api/rooms đã sẵn sàng và nhóm cung cấp database hoặc fixture thử nghiệm riêng không chứa dữ liệu phòng phù hợp.
-
-| Thuộc tính | Giá trị |
-|---|---|
-| Method | GET |
-| Endpoint | `/api/rooms` |
-| URL dự kiến | `{{base_url}}/api/rooms` |
-| Request body | Không có |
-| Điều kiện trước | Có môi trường database thử nghiệm không chứa phòng phù hợp |
-
-**Các bước thực hiện:**
-
-1. Sử dụng database hoặc fixture thử nghiệm riêng.
-2. Đảm bảo không có bản ghi phòng phù hợp với điều kiện truy vấn.
-3. Gửi request GET đến `/api/rooms`.
-4. Kiểm tra HTTP status và response.
-
-**Kết quả kỳ vọng:**
-
-- API xử lý được trường hợp không có dữ liệu.
-- Response thể hiện danh sách rỗng theo cấu trúc đã thống nhất.
-- Không phát sinh lỗi ngoài dự kiến chỉ vì danh sách không có phần tử.
-
-**Lưu ý:**
-
-- Không tự ý xóa dữ liệu phòng trong database dùng chung để tạo tình huống kiểm thử.
-- Không giả định response phải là `[]` nếu backend chưa xác nhận cấu trúc response.
-- Chỉ thực hiện kiểm thử khi có database hoặc fixture thử nghiệm phù hợp.
-- Nếu chưa có môi trường hoặc fixture phù hợp, đánh dấu test là Bị chặn.
-
-**Kết quả thực tế:** Chưa kiểm thử.
-
-**HTTP status thực tế:** Chưa ghi nhận.
-
----
-
-### API-W1-04 – Kiểm tra khi backend không thể kết nối
-
-**Mục đích:** Kiểm tra cách client nhận biết và xử lý tình huống backend không hoạt động.
-
-**Trạng thái hiện tại:** Chưa kiểm thử – Chờ xác nhận môi trường Backend thử nghiệm và địa chỉ kết nối được sử dụng. Chỉ thực hiện trên môi trường thử nghiệm được phép.
-
-| Thuộc tính | Giá trị |
-|---|---|
-| Method | GET |
-| Endpoint | `/api/health` |
-| URL dự kiến | `{{base_url}}/api/health` |
-| Request body | Không có |
-| Điều kiện trước | Backend không chạy hoặc địa chỉ kiểm thử không thể kết nối |
-
-**Các bước thực hiện:**
-
-1. Sử dụng môi trường local hoặc môi trường thử nghiệm được phép.
-2. Đảm bảo địa chỉ kiểm thử không thể kết nối đến backend.
-3. Gửi request GET đến `/api/health`.
-4. Ghi nhận thông báo lỗi kết nối.
-5. Nếu frontend đã được tích hợp, kiểm tra giao diện khi API không phản hồi.
-
-**Kết quả kỳ vọng:**
-
-- Client nhận biết được lỗi kết nối.
-- Postman hiển thị thông báo lỗi phù hợp.
-- Frontend không hiển thị dữ liệu giả hoặc dữ liệu cũ như thể request vừa thành công.
-- Giao diện có thông báo phù hợp khi không thể tải dữ liệu.
-
-**Lưu ý:**
-
-Khi backend không thể kết nối, Postman có thể không nhận được HTTP status vì không có phản hồi HTTP từ server. Cần ghi lại lỗi kết nối thực tế, không tự ghi HTTP 500.
-
-Chỉ thực hiện trên môi trường thử nghiệm được phép, không chủ động dừng backend dùng chung của nhóm.
-
-**Kết quả thực tế:** Chưa kiểm thử.
-
-**HTTP status thực tế:** Không áp dụng khi không nhận được phản hồi HTTP.
-
-## 5. Bảng theo dõi kết quả kiểm thử
-
-Bảng này dùng để theo dõi tiến độ thực hiện. Không được đánh dấu Đạt nếu chưa có kết quả thực tế và bằng chứng phù hợp.
-
-| Mã test | Nội dung | Trạng thái ban đầu | Kết quả |
+| Mã test | Nội dung | Trạng thái | Kết quả |
 |---|---|---|---|
-| API-W1-01 | Kiểm tra trạng thái backend | Chưa chạy | Chưa ghi nhận |
-| API-W1-02 | Lấy danh sách phòng | Chưa chạy | Chưa ghi nhận |
-| API-W1-03 | Kiểm tra danh sách phòng rỗng | Chưa chạy | Chưa ghi nhận |
-| API-W1-04 | Kiểm tra lỗi kết nối backend | Chưa chạy | Chưa ghi nhận |
+| API-W1-01 | Kiểm tra trạng thái backend | Chưa chạy | Chờ xác nhận endpoint |
+| API-W1-02 | Lấy danh sách phòng | Chưa chạy | Chờ xác nhận endpoint |
+| API-W1-03 | Danh sách phòng rỗng | Chưa chạy | Chờ backend và dữ liệu |
+| API-W1-04 | Lỗi kết nối backend | Chưa chạy | Chưa có kết quả thực tế |
 
-Quy ước cập nhật:
+**Quy ước trạng thái:**
 
-- **Chưa chạy:** Chưa thực hiện request.
-- **Đạt:** Kết quả thực tế đáp ứng tiêu chí kỳ vọng.
-- **Không đạt:** Kết quả thực tế không đáp ứng tiêu chí kỳ vọng.
-- **Bị chặn:** Chưa thể kiểm thử do thiếu backend, database, dữ liệu hoặc quyền truy cập.
+- `Chưa chạy`: Chưa gửi request kiểm thử.
+- `Đạt`: Kết quả thực tế đáp ứng kết quả mong đợi.
+- `Không đạt`: Kết quả thực tế không đáp ứng kết quả mong đợi.
+- `Bị chặn`: Không thể kiểm thử do thiếu backend, endpoint, dữ liệu hoặc quyền truy cập.
 
-Khi cập nhật trạng thái, cần ghi rõ nguyên nhân và bằng chứng tương ứng.
+Không chuyển trạng thái sang `Đạt` nếu chưa có response thực tế làm bằng chứng.
 
-## 6. Thông tin cần xác nhận với thành viên backend và database
+## 6. Ghi nhận lỗi khi kiểm thử
 
-Trước khi thực hiện kiểm thử chính thức, cần phối hợp với thành viên phụ trách để xác nhận:
+Khi một request không đạt hoặc phát sinh lỗi, ghi lại các thông tin sau:
 
-### 6.1. Backend
+| Thông tin | Nội dung cần ghi |
+|---|---|
+| Mã test | Ví dụ: API-W1-02 |
+| Thời gian | Ngày và giờ kiểm thử |
+| Method và URL | Request đã gửi |
+| HTTP status | Mã trạng thái nhận được, nếu có |
+| Response/Error | Nội dung phản hồi hoặc thông báo lỗi |
+| Kết quả mong đợi | Kết quả theo API contract |
+| Kết quả thực tế | Kết quả nhận được |
+| Người phối hợp | Thành viên phụ trách backend hoặc frontend |
+| Hướng xử lý | Cách khắc phục hoặc nội dung cần xác nhận |
 
-- Backend đã có thể khởi động và nhận request chưa?
-- Base URL chính thức là gì?
-- Endpoint `/api/health` đã được triển khai chưa?
-- Endpoint `/api/rooms` đã được triển khai chưa?
-- Response của từng endpoint có cấu trúc chính thức như thế nào?
-- API sử dụng HTTP status nào khi thành công và khi xảy ra lỗi?
-- Có cần xác thực đối với hai endpoint trên không?
+Không đưa mật khẩu, access token hoặc thông tin xác thực cá nhân vào ảnh chụp và tài liệu báo cáo.
 
-### 6.2. Database
+## 7. Lưu bằng chứng kiểm thử
 
-- Database thử nghiệm đã được khởi tạo chưa?
-- Đã có dữ liệu phòng mẫu chưa?
-- Những trường nào trong response được lấy từ bảng nào?
-- Có fixture hoặc hướng dẫn tạo dữ liệu kiểm thử không?
-- Có môi trường riêng để kiểm tra trường hợp danh sách phòng rỗng không?
+Việc lưu bằng chứng kiểm thử phải tuân thủ quy ước chung của dự án được mô tả trong:
 
-### 6.3. Frontend
+```text
+docs/testing/evidence-guide.md
+```
 
-Sau khi PR khởi tạo Frontend được review, merge vào nhánh tích hợp theo quy trình GitHub của nhóm và xác nhận có thể chạy.
+Đối với công việc thuộc tuần 1, minh chứng được lưu theo cấu trúc:
 
-- Kiểm tra frontend có lấy được danh sách phòng từ API không.
-- Kiểm tra dữ liệu hiển thị có đúng với response không.
-- Kiểm tra trạng thái Loading.
-- Kiểm tra trạng thái Empty khi danh sách rỗng.
-- Kiểm tra thông báo lỗi khi API không thể kết nối.
+```text
+docs/evidence/w01/
+```
 
-## 7. Quy trình ghi nhận lỗi
+Tên file minh chứng đề xuất:
 
-Khi phát hiện lỗi, ghi lại các thông tin:
+```text
+API-W1-01.md
+API-W1-02.md
+API-W1-03.md
+API-W1-04.md
+```
 
-1. Mã test liên quan.
-2. Ngày và thời điểm thực hiện.
-3. Môi trường kiểm thử.
-4. Method và URL.
-5. Các bước tái hiện lỗi.
-6. HTTP status hoặc thông báo lỗi thực tế.
-7. Response thực tế nếu có.
-8. Kết quả kỳ vọng và kết quả thực tế.
-9. Ảnh chụp hoặc log làm bằng chứng.
-10. Thành viên phụ trách cần phối hợp xử lý.
+Mỗi file minh chứng cần tuân thủ các trường thông tin và định dạng được quy định trong `evidence-guide.md`, bao gồm mã test, thời gian thực hiện, môi trường, request, kết quả kỳ vọng, kết quả thực tế và kết luận.
 
-Không đưa mật khẩu, token, thông tin kết nối hoặc dữ liệu cá nhân thật vào log được commit.
+**Nguyên tắc lưu bằng chứng:**
 
-## 8. Lưu minh chứng kiểm thử
+- Chỉ tạo và cập nhật minh chứng khi đã thực hiện kiểm thử thực tế.
+- Không tạo ảnh chụp, log hoặc response giả để thay thế kết quả kiểm thử.
+- Không ghi nhận trạng thái `Đạt` khi chưa có bằng chứng phù hợp.
+- Không đưa mật khẩu, access token hoặc dữ liệu cá nhân thật vào minh chứng.
+- Không commit backup database hoặc thông tin kết nối nhạy cảm vào repository.
+- Nếu chưa thực hiện kiểm thử, giữ trạng thái `Chưa chạy` hoặc `Bị chặn` và ghi rõ lý do trong tài liệu này.
 
-Tuân thủ quy định chung tại:
+## 8. Phối hợp với các thành viên
 
-`docs/testing/evidence-guide.md`
+| Thành viên phụ trách | Nội dung cần phối hợp |
+|---|---|
+| Backend | Xác nhận endpoint, method, response và trạng thái triển khai |
+| Database | Xác nhận dữ liệu phòng phục vụ kiểm thử |
+| Frontend | Thống nhất cấu trúc response để frontend xử lý dữ liệu và trạng thái lỗi |
+| Người phụ trách Issue #5 | Chuẩn bị request, kiểm thử khi đủ điều kiện và ghi nhận kết quả |
 
-Khi thực sự chạy kiểm thử, lưu minh chứng theo cấu trúc:
+Tài liệu này chỉ tập trung vào việc chuẩn bị và kiểm thử request API cơ bản. Việc kiểm thử toàn bộ nghiệp vụ backend, tích hợp cơ sở dữ liệu và triển khai ba tầng không thuộc phạm vi chi tiết của tài liệu này.
 
-`docs/evidence/wXX/<ma-test>.md`
+Thông tin về môi trường, công cụ, yêu cầu máy chủ ảo và trạng thái triển khai được ghi tại:
 
-Ví dụ, nếu kiểm thử API-W1-01 trong tuần 1:
+```text
+docs/deployment/prerequisites.md
+```
 
-`docs/evidence/w01/API-W1-01.md`
+## 9. Kết luận và công việc tiếp theo
 
-Mỗi minh chứng cần ghi nhận các thông tin theo evidence guide, bao gồm:
+Hiện tại, tài liệu đã chuẩn bị bốn kịch bản kiểm thử cơ bản cho API HMS. Tuy nhiên, chưa thể xác nhận các kịch bản đã đạt vì cần kiểm tra trực tiếp với backend và API contract đã thống nhất.
 
-- Mã test và Issue liên quan.
-- Ngày chạy.
-- Người chạy và người kiểm tra.
-- Commit và nhánh.
-- Phiên bản môi trường.
-- Dữ liệu thử nghiệm và bước chuẩn bị.
-- Request hoặc lệnh đã chạy.
-- Kết quả kỳ vọng và thực tế.
-- SQL xác nhận trạng thái cuối nếu có thay đổi dữ liệu cần kiểm tra.
-- Kết luận: Đạt / Không đạt / Chưa chạy.
-- PR, ảnh, log và lỗi còn mở.
+**Công việc tiếp theo:**
 
-Đối với các request GET không làm thay đổi dữ liệu, cần ghi rõ SQL xác nhận trạng thái cuối là không áp dụng nếu không cần thiết.
+1. Trao đổi với thành viên backend để xác nhận `/api/health` và `/api/rooms` đã được triển khai hay chưa.
+2. Xác nhận Base URL, cổng và cấu trúc response thực tế.
+3. Gửi request bằng Postman khi backend sẵn sàng.
+4. Cập nhật HTTP status, response, trạng thái test và minh chứng theo `docs/testing/evidence-guide.md`.
+5. Thông báo các lỗi phát hiện được cho thành viên phụ trách để phối hợp xử lý.
 
-Không tạo file minh chứng, log hoặc ảnh giả khi chưa thực hiện kiểm thử. Log dài, ảnh hoặc video lớn được đính kèm vào Issue hoặc liên kết phù hợp thay vì commit trực tiếp vào repository. Không commit backup database.
-
-## 9. Tiến độ và trạng thái tài liệu
-
-Tài liệu được xây dựng trong phạm vi Issue #5 của tuần 1.
-
-**Trạng thái hiện tại:**
-
-- Đã xác định các endpoint cần kiểm thử theo API contract đề xuất.
-- Đã xây dựng các tình huống request cơ bản.
-- Đã xác định các thông tin cần backend và database xác nhận.
-- Chưa xác nhận toàn bộ endpoint đã được triển khai.
-- Chưa ghi nhận kết quả kiểm thử thực tế.
-- Chưa có minh chứng kiểm thử thực tế.
-
-**Điều kiện cập nhật hoàn thành:**
-
-- Backend xác nhận endpoint và response.
-- Các request được thực hiện trên môi trường phù hợp.
-- Kết quả thực tế được ghi nhận đầy đủ.
-- Các lỗi phát hiện được báo lại cho thành viên phụ trách.
-- Minh chứng được lưu theo quy định của dự án.
-
-Tài liệu sẽ được cập nhật khi API contract hoặc cách triển khai thực tế có thay đổi.
+**Trạng thái tổng thể:** Draft – Đã chuẩn bị kịch bản kiểm thử, chưa có kết quả kiểm thử API thực tế.
