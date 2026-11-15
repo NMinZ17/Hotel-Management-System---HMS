@@ -1,16 +1,26 @@
-# React + Vite
+# Frontend - Hotel Management System (HMS)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Giao diện người dùng cho hệ thống quản lý khách sạn (React + Vite).
 
-Currently, two official plugins are available:
+## 1. Cấu trúc thư mục chính
+- `src/lib/api.js`: Cấu hình Axios client và các hàm gọi API (`/api/auth/login`, `/api/rooms`).
+- `src/pages/LoginPage.jsx`: Màn hình đăng nhập hệ thống.
+- `src/pages/RoomsPage.jsx`: Màn hình hiển thị danh sách phòng (có xử lý Loading, Empty, Error).
+- `mock_backend.py`: File backend chạy thử, không thay thế backend thật
+## 2. Hướng dẫn cài đặt và khởi chạy
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Bước 1: Chạy Mock Backend (cổng 8000)
+Từ thư mục gốc của dự án (nơi chứa file `mock_backend.py`), chạy lệnh:
+```bash
+pip install fastapi uvicorn
+uvicorn mock_backend:app --reload --port 8000
+```
+- Tài khoản đăng nhập mẫu: letan@hms.example / letan123
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Bước 2: Chạy Frontend
+```bash
+cd frontend
+npm install
+npm run build
+npm run dev
+```
