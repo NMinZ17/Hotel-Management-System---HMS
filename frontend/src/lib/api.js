@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -21,13 +21,13 @@ apiClient.interceptors.request.use(
 
 // Các hàm gọi API cơ bản
 export const authApi = {
-  login: (email, password) => apiClient.post('/auth/login', { email, password }),
-  register: (data) => apiClient.post('/auth/register', data),
+  login: (email, password) => apiClient.post('/api/auth/login', { email, password }),
+  register: (data) => apiClient.post('/api/auth/register', data),
 };
 
 export const roomApi = {
-  getAll: () => apiClient.get('/rooms'),
-  getById: (id) => apiClient.get(`/rooms/${id}`),
+  getAll: () => apiClient.get('/api/rooms'),
+  getById: (id) => apiClient.get(`/api/rooms/${id}`),
 };
 
 export default apiClient;
