@@ -31,7 +31,7 @@ git push -u origin feat/w01-minh-room-api
 
 Đường dẫn trong ví dụ chỉ tồn tại sau khi tác giả tạo file. Chọn đúng file đã sửa; không upload .env, mật khẩu, node_modules, .venv, backup DB hoặc dữ liệu khách thật. Các phiên bản thư viện đã kiểm tra và lockfile cần được commit.
 
-Trên GitHub: Pull requests -> New pull request -> base `main`, compare nhánh của mình. Điền vấn đề/hành vi mới, liên kết Issue, cách kiểm thử và kết quả thực. PR chưa đủ thì để Draft; nhờ reviewer kiểm tra trước khi merge. Chia PR theo phần chạy/kiểm tra được, không chờ hết tuần mới mở một PR lớn.
+Trên GitHub: Pull requests -> New pull request -> base `main`, compare nhánh của mình. Điền vấn đề/hành vi mới, liên kết Issue, cách kiểm thử và kết quả thực. Nhờ reviewer kiểm tra trước khi merge. Chia PR theo phần chạy/kiểm tra được, không chờ hết tuần mới mở một PR lớn.
 
 Với Issue tuần có nhiều đầu việc, các PR nhỏ dùng `Refs #số-issue` để giữ Issue mở. Chỉ PR cuối đáp ứng toàn bộ tiêu chí mới dùng `Closes #số-issue`. GitHub tự đóng khi PR đó merge vào nhánh mặc định; vì vậy phải đọc đủ tiêu chí trước khi dùng từ khóa này. [Cơ chế liên kết PR và Issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue).
 
@@ -70,3 +70,4 @@ Mỗi người cập nhật `docs/progress/w01.md` (đổi theo tuần) qua PR: 
 Đếm số Issue đã nghiệm thu/24 để theo dõi việc bàn giao, không gọi đó là phần trăm độ hoàn thiện phần mềm vì các Issue khác kích thước. Số commit không phải tiến độ chức năng. Nếu đổi phạm vi/thời gian, sửa cả Issue và báo cáo, ghi lý do thay vì âm thầm coi hoàn tất.
 
 Hai buổi tích hợp ngắn và một buổi demo mỗi tuần, tính trong 16–20 giờ/người/tuần. Nếu vướng quá một buổi, comment request/log/dữ liệu thử và người hỗ trợ ngay.
+

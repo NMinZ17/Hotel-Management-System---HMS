@@ -1,0 +1,58 @@
+[
+  {
+    "room_id": 101,
+    "room_number": "101",
+    "room_type_id": 1,
+    "floor": 1,
+    "housekeeping_status": "CLEAN",
+    "maintenance_status": "OK",
+    "room_type": {
+      "room_type_id": 1,
+      "name": "Standard",
+      "max_guests": 2,
+      "base_price": "800000.00"
+    }
+  },
+  {
+    "room_id": 102,
+    "room_number": "102",
+    "room_type_id": 1,
+    "floor": 1,
+    "housekeeping_status": "CLEAN",
+    "maintenance_status": "OK",
+    "room_type": {
+      "room_type_id": 1,
+      "name": "Standard",
+      "max_guests": 2,
+      "base_price": "800000.00"
+    }
+  },
+  {
+    "room_id": 201,
+    "room_number": "201",
+    "room_type_id": 2,
+    "floor": 2,
+    "housekeeping_status": "CLEAN",
+    "maintenance_status": "OK",
+    "room_type": {
+      "room_type_id": 2,
+      "name": "Deluxe",
+      "max_guests": 3,
+      "base_price": "1200000.00"
+    }
+  },
+  {
+    "room_id": 202,
+    "room_number": "202",
+    "room_type_id": 3,
+    "floor": 2,
+    "housekeeping_status": "CLEAN",
+    "maintenance_status": "OK",
+    "room_type": {
+      "room_type_id": 3,
+      "name": "Suite",
+      "max_guests": 4,
+      "base_price": "2500000.00"
+    }
+  }
+]
