@@ -20,10 +20,6 @@ apiClient.interceptors.request.use(
 );
 
 // Các hàm gọi API cơ bản
-export const authApi = {
-  login: (email, password) => apiClient.post('/api/auth/login', { email, password }),
-  register: (data) => apiClient.post('/api/auth/register', data),
-};
 
 export const roomApi = {
   getAll: () => apiClient.get('/api/rooms'),
