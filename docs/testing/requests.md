@@ -4,256 +4,267 @@
 **Issue:** #5 – Thiết kế layout chung, request thử và kiểm tra VM  
 **Người phụ trách:** Đỗ Thị Thanh Thư  
 **Reviewer:** maingoclinh1681  
-**Tuần thực hiện:** 09/11/2026 – 15/11/2026  
-**Cập nhật lần cuối:** 14/11/2026  
-**Trạng thái:** Draft – Chuẩn bị kịch bản, chờ xác nhận và kiểm thử với backend
+**Tuần thực hiện:** Week 1 (09/11/2026 – 15/11/2026)  
+**Ngày cập nhật:** 17/11/2026  
+**Trạng thái:** Completed for Week 1 scope – Các request API, backend unittest và kiểm tra Frontend cơ bản đã thực hiện.
 
 ---
 
 ## 1. Mục đích
 
-Tài liệu này ghi lại kế hoạch kiểm thử các API cơ bản của hệ thống HMS trong tuần 1, sử dụng Postman để gửi request và kiểm tra response.
+Ghi nhận các request và kết quả kiểm tra API của Hotel Management System (HMS) trong phạm vi công việc Week 1.
 
-Các mục tiêu chính:
+Tài liệu tập trung vào:
+- Kiểm tra API Health và danh sách phòng.
+- Kiểm tra phản hồi khi database không có dữ liệu hoặc không khả dụng.
+- Ghi nhận kết quả backend unittest.
+- Kiểm tra dependency và build Frontend.
+- Ghi nhận các thao tác lọc, sắp xếp phòng đã xác minh.
 
-- Kiểm tra khả năng kết nối giữa Postman và backend.
-- Kiểm tra response của API sức khỏe hệ thống và API danh sách phòng khi backend hỗ trợ.
-- Ghi nhận mã HTTP, cấu trúc response và lỗi phát sinh.
-- Phân biệt kết quả mong đợi với kết quả thực tế.
-- Cung cấp bằng chứng kiểm thử để nhóm phối hợp xử lý.
+Không mở rộng sang bộ kiểm thử nghiệp vụ T01–T08 trong phạm vi Week 1.
 
-**Lưu ý:** Tài liệu này là kế hoạch kiểm thử. Không xem các API được đề xuất trong tài liệu API contract là API đã triển khai nếu chưa kiểm tra trực tiếp trên backend.
+## 2. Môi trường kiểm thử
 
-## 2. Phạm vi kiểm thử
-
-| Nội dung | Phạm vi |
+| Thành phần | Môi trường |
 |---|---|
-| Công cụ | Postman |
+| Hệ điều hành | Windows local |
 | Backend | FastAPI |
-| Địa chỉ backend dự kiến | `http://localhost:8000` |
-| API kiểm tra sức khỏe | `GET /api/health` |
-| API danh sách phòng | `GET /api/rooms` |
-| Kiểm tra lỗi kết nối | Backend chưa chạy hoặc không truy cập được |
-| Kiểm tra dữ liệu rỗng | API danh sách phòng không có dữ liệu |
+| Database | PostgreSQL 18 |
+| Database phát triển | `hms_dev` |
+| Database kiểm thử | `hms_test` |
+| API local | `http://localhost:8000` |
+| Công cụ gửi request | PowerShell `Invoke-RestMethod` |
+| Công cụ kiểm thử tự động | Python `unittest`, FastAPI `TestClient` |
+| Kiểm tra Frontend | npm build và thao tác giao diện |
 
-Các endpoint `/api/health` và `/api/rooms` được ghi nhận trong tài liệu API contract là endpoint dự kiến. Cần xác nhận với thành viên phụ trách backend trước khi kết luận chúng đã được triển khai.
+Các request API được thực hiện bằng PowerShell. Không ghi nhận việc sử dụng Postman trong đợt kiểm thử này.
 
-## 3. Chuẩn bị kiểm thử
+Database `hms_test` được sử dụng riêng cho kiểm thử tích hợp. Các test tạo schema riêng để cô lập dữ liệu kiểm thử; không chủ động xóa hoặc reset database `hms_dev`.
 
-### 3.1. Điều kiện cần
+## 3. Chuẩn bị
 
-- Đã cài đặt Postman.
-- Backend FastAPI đã được cài đặt và khởi chạy.
-- Đã xác nhận địa chỉ và cổng backend đang sử dụng.
-- Đã thống nhất endpoint và cấu trúc response với thành viên phụ trách backend.
+1. Khởi động PostgreSQL local.
+2. Khởi động backend FastAPI tại cổng 8000.
+3. Kiểm tra kết nối database phát triển.
+4. Chuẩn bị database `hms_test` riêng cho kiểm thử tích hợp.
+5. Thực hiện request API và kiểm thử tự động theo từng trường hợp.
 
-### 3.2. Cấu hình request
+## 4. Kết quả kiểm tra API
 
-Nếu backend chạy tại máy cá nhân theo cấu hình dự kiến:
+### API-W1-01 – Health check
 
-```text
-Base URL: http://localhost:8000
+**Request**
+
+```http
+GET /api/health
 ```
 
-Các request sử dụng Base URL:
+**Công cụ:** PowerShell `Invoke-RestMethod`
 
-```text
-{{baseUrl}}/api/health
-{{baseUrl}}/api/rooms
-```
-
-Có thể tạo biến môi trường trong Postman:
-
-| Variable | Initial value |
-|---|---|
-| `baseUrl` | `http://localhost:8000` |
-
-Nếu backend sử dụng địa chỉ hoặc cổng khác, cần cập nhật biến này theo cấu hình thực tế.
-
-## 4. Danh sách kịch bản kiểm thử
-
-### API-W1-01: Kiểm tra trạng thái backend
-
-**Mục đích:** Kiểm tra backend có phản hồi request hay không.
-
-- Method: `GET`
-- URL dự kiến: `{{baseUrl}}/api/health`
-- Body: Không có.
-
-**Kết quả mong đợi:**
-
-- Backend phản hồi thành công.
-- HTTP status dự kiến: `200 OK`.
-- Response có cấu trúc thể hiện trạng thái hoạt động của hệ thống theo API contract đã thống nhất.
+**Kết quả kỳ vọng:**
+- HTTP 200.
+- API trả về trạng thái hoạt động.
+- Health check không phụ thuộc kết nối database.
 
 **Kết quả thực tế:**
+- HTTP 200.
+- Response:
 
-- Trạng thái: Chưa chạy.
-- HTTP status: Chưa ghi nhận.
-- Response: Chưa ghi nhận.
-- Nguyên nhân: Chưa xác nhận endpoint đã được triển khai trên backend.
+```json
+{
+  "status": "ok",
+  "service": "hms-api"
+}
+```
 
-### API-W1-02: Lấy danh sách phòng
+**Kết luận:** Đạt.
 
-**Mục đích:** Kiểm tra API trả về danh sách phòng và cấu trúc dữ liệu.
+### API-W1-02 – Lấy danh sách phòng
 
-- Method: `GET`
-- URL dự kiến: `{{baseUrl}}/api/rooms`
-- Body: Không có.
+**Request**
 
-**Kết quả mong đợi:**
+```http
+GET /api/rooms
+```
 
-- Backend phản hồi thành công khi endpoint được triển khai.
-- HTTP status dự kiến: `200 OK`.
-- Response trả về danh sách phòng theo cấu trúc API contract.
-- Các trường dữ liệu cần được thống nhất với frontend, đặc biệt là mã phòng, số phòng, tầng, loại phòng và trạng thái phòng.
+**Công cụ:** PowerShell `Invoke-RestMethod`
+
+**Kết quả kỳ vọng:**
+- API trả về danh sách phòng.
+- Dữ liệu có cấu trúc phù hợp với response schema.
+- Không phát sinh lỗi khi truy vấn database.
 
 **Kết quả thực tế:**
+- Request thành công.
+- Nhận được 4 bản ghi phòng từ database local `hms_dev`.
 
-- Trạng thái: Chưa chạy.
-- HTTP status: Chưa ghi nhận.
-- Response: Chưa ghi nhận.
-- Nguyên nhân: Chưa xác nhận endpoint đã được triển khai và có dữ liệu kiểm thử.
+**Kết luận:** Đạt.
 
-### API-W1-03: Kiểm tra danh sách phòng rỗng
+### API-W1-03 – Danh sách phòng rỗng
 
-**Mục đích:** Kiểm tra API xử lý trường hợp hệ thống chưa có phòng nào.
+**Test tự động:** `test_empty_database_returns_empty_array`
 
-- Method: `GET`
-- URL dự kiến: `{{baseUrl}}/api/rooms`
-- Body: Không có.
+**Công cụ:** Python `unittest` và FastAPI `TestClient`.
 
-**Kết quả mong đợi:**
+**Chuẩn bị:**
+- Sử dụng database kiểm thử riêng.
+- Test tạo schema cô lập.
+- Thực hiện kiểm thử trên dữ liệu rỗng trong schema đó.
 
-- API phản hồi theo quy ước đã thống nhất.
-- Nếu API trả về danh sách rỗng, response có thể chứa mảng `[]`.
-- Frontend cần có trạng thái thông báo chưa có dữ liệu, thay vì hiển thị lỗi hoặc bảng trống không giải thích.
-
-**Kết quả thực tế:**
-
-- Trạng thái: Chưa chạy.
-- HTTP status: Chưa ghi nhận.
-- Response: Chưa ghi nhận.
-- Nguyên nhân: Chưa có môi trường backend và dữ liệu phù hợp để kiểm thử trường hợp này.
-
-### API-W1-04: Kiểm tra lỗi kết nối backend
-
-**Mục đích:** Kiểm tra cách nhận biết và ghi nhận lỗi khi backend không hoạt động hoặc không thể truy cập.
-
-- Method: `GET`
-- URL: `{{baseUrl}}/api/health`
-- Điều kiện: Backend không chạy hoặc địa chỉ kết nối không hợp lệ.
-
-**Kết quả mong đợi:**
-
-- Request không nhận được response thành công.
-- Postman hiển thị lỗi kết nối phù hợp.
-- Ghi nhận thông báo lỗi, thời điểm kiểm thử và cấu hình request.
-- Frontend cần có thông báo lỗi kết nối dễ hiểu khi gặp tình huống tương tự.
+**Kết quả kỳ vọng:**
+- HTTP 200.
+- Response là mảng rỗng `[]`.
+- Không phát sinh lỗi khi không có phòng.
 
 **Kết quả thực tế:**
+- Test thành công.
+- API trả về mảng rỗng theo kỳ vọng.
 
-- Trạng thái: Chưa chạy.
-- Lỗi thực tế: Chưa ghi nhận.
-- Nguyên nhân: Chưa thực hiện kiểm thử có chủ đích trong môi trường phù hợp.
+**Kết luận:** Đạt.
 
-## 5. Bảng tổng hợp kết quả
+### API-W1-04 – Database không khả dụng
 
-| Mã test | Nội dung | Trạng thái | Kết quả |
-|---|---|---|---|
-| API-W1-01 | Kiểm tra trạng thái backend | Chưa chạy | Chờ xác nhận endpoint |
-| API-W1-02 | Lấy danh sách phòng | Chưa chạy | Chờ xác nhận endpoint |
-| API-W1-03 | Danh sách phòng rỗng | Chưa chạy | Chờ backend và dữ liệu |
-| API-W1-04 | Lỗi kết nối backend | Chưa chạy | Chưa có kết quả thực tế |
+**Test tự động:** `test_database_failure_returns_safe_503`
 
-**Quy ước trạng thái:**
+**Công cụ:** Python `unittest` và FastAPI `TestClient`.
 
-- `Chưa chạy`: Chưa gửi request kiểm thử.
-- `Đạt`: Kết quả thực tế đáp ứng kết quả mong đợi.
-- `Không đạt`: Kết quả thực tế không đáp ứng kết quả mong đợi.
-- `Bị chặn`: Không thể kiểm thử do thiếu backend, endpoint, dữ liệu hoặc quyền truy cập.
+**Mục đích:**
 
-Không chuyển trạng thái sang `Đạt` nếu chưa có response thực tế làm bằng chứng.
+Kiểm tra cách API xử lý khi không thể kết nối PostgreSQL trong khi tiến trình FastAPI vẫn đang hoạt động.
 
-## 6. Ghi nhận lỗi khi kiểm thử
+**Kết quả kỳ vọng:**
+- API không trả về thông tin nội bộ hoặc thông tin kết nối nhạy cảm.
+- Client nhận HTTP 503 với thông báo an toàn.
+- Backend không bị dừng do lỗi kết nối database.
 
-Khi một request không đạt hoặc phát sinh lỗi, ghi lại các thông tin sau:
+**Kết quả thực tế:**
+- Test thành công.
+- API trả HTTP 503 theo thiết kế.
+- Có log lỗi kết nối database ở phía server.
 
-| Thông tin | Nội dung cần ghi |
-|---|---|
-| Mã test | Ví dụ: API-W1-02 |
-| Thời gian | Ngày và giờ kiểm thử |
-| Method và URL | Request đã gửi |
-| HTTP status | Mã trạng thái nhận được, nếu có |
-| Response/Error | Nội dung phản hồi hoặc thông báo lỗi |
-| Kết quả mong đợi | Kết quả theo API contract |
-| Kết quả thực tế | Kết quả nhận được |
-| Người phối hợp | Thành viên phụ trách backend hoặc frontend |
-| Hướng xử lý | Cách khắc phục hoặc nội dung cần xác nhận |
+**Lưu ý:** Test này kiểm tra lỗi kết nối database, không phải kiểm thử trường hợp tiến trình Backend bị dừng hoàn toàn.
 
-Không đưa mật khẩu, access token hoặc thông tin xác thực cá nhân vào ảnh chụp và tài liệu báo cáo.
+**Kết luận:** Đạt.
 
-## 7. Lưu bằng chứng kiểm thử
+## 5. Kết quả kiểm thử tự động Backend
 
-Việc lưu bằng chứng kiểm thử phải tuân thủ quy ước chung của dự án được mô tả trong:
+**Lệnh đã chạy:**
 
-```text
-docs/testing/evidence-guide.md
+```powershell
+python -m unittest discover -s tests -v
 ```
 
-Đối với công việc thuộc tuần 1, minh chứng được lưu theo cấu trúc:
+**Kết quả:**
 
 ```text
-docs/evidence/w01/
+Ran 11 tests in 6.706s
+
+OK
 ```
 
-Tên file minh chứng đề xuất:
+11 test đều thành công:
+
+| STT | Test | Kết quả |
+|---|---|---|
+| 1 | `test_cors_allows_configured_origins` | Passed |
+| 2 | `test_cors_rejects_unconfigured_origin` | Passed |
+| 3 | `test_database_failure_returns_safe_503` | Passed |
+| 4 | `test_health_does_not_require_a_database_connection` | Passed |
+| 5 | `test_home_redirects_to_api_documentation` | Passed |
+| 6 | `test_invalid_filters_are_rejected_before_database_connection` | Passed |
+| 7 | `test_committed_database_changes_appear_in_following_request` | Passed |
+| 8 | `test_empty_database_returns_empty_array` | Passed |
+| 9 | `test_invalid_filters_and_injection_are_rejected` | Passed |
+| 10 | `test_room_contract_filters_inactive_rows_and_orders_stably` | Passed |
+| 11 | `test_room_type_filter_and_pagination` | Passed |
+
+**Kiểm tra dependency:**
+
+```powershell
+python -m pip check
+```
+
+Kết quả:
 
 ```text
-API-W1-01.md
-API-W1-02.md
-API-W1-03.md
-API-W1-04.md
+No broken requirements found.
 ```
 
-Mỗi file minh chứng cần tuân thủ các trường thông tin và định dạng được quy định trong `evidence-guide.md`, bao gồm mã test, thời gian thực hiện, môi trường, request, kết quả kỳ vọng, kết quả thực tế và kết luận.
+**Kết luận Backend:** 11/11 unittest Passed; không phát hiện dependency bị lỗi theo kết quả `pip check`.
 
-**Nguyên tắc lưu bằng chứng:**
+## 6. Kiểm tra Frontend
 
-- Chỉ tạo và cập nhật minh chứng khi đã thực hiện kiểm thử thực tế.
-- Không tạo ảnh chụp, log hoặc response giả để thay thế kết quả kiểm thử.
-- Không ghi nhận trạng thái `Đạt` khi chưa có bằng chứng phù hợp.
-- Không đưa mật khẩu, access token hoặc dữ liệu cá nhân thật vào minh chứng.
-- Không commit backup database hoặc thông tin kết nối nhạy cảm vào repository.
-- Nếu chưa thực hiện kiểm thử, giữ trạng thái `Chưa chạy` hoặc `Bị chặn` và ghi rõ lý do trong tài liệu này.
+**Lệnh build đã chạy:**
 
-## 8. Phối hợp với các thành viên
-
-| Thành viên phụ trách | Nội dung cần phối hợp |
-|---|---|
-| Backend | Xác nhận endpoint, method, response và trạng thái triển khai |
-| Database | Xác nhận dữ liệu phòng phục vụ kiểm thử |
-| Frontend | Thống nhất cấu trúc response để frontend xử lý dữ liệu và trạng thái lỗi |
-| Người phụ trách Issue #5 | Chuẩn bị request, kiểm thử khi đủ điều kiện và ghi nhận kết quả |
-
-Tài liệu này chỉ tập trung vào việc chuẩn bị và kiểm thử request API cơ bản. Việc kiểm thử toàn bộ nghiệp vụ backend, tích hợp cơ sở dữ liệu và triển khai ba tầng không thuộc phạm vi chi tiết của tài liệu này.
-
-Thông tin về môi trường, công cụ, yêu cầu máy chủ ảo và trạng thái triển khai được ghi tại:
-
-```text
-docs/deployment/prerequisites.md
+```powershell
+npm --prefix frontend run build
 ```
 
-## 9. Kết luận và công việc tiếp theo
+**Kết quả:** Build thành công.
 
-Hiện tại, tài liệu đã chuẩn bị bốn kịch bản kiểm thử cơ bản cho API HMS. Tuy nhiên, chưa thể xác nhận các kịch bản đã đạt vì cần kiểm tra trực tiếp với backend và API contract đã thống nhất.
+Các thao tác giao diện đã kiểm tra:
 
-**Công việc tiếp theo:**
+- Kết nối API và hiển thị danh sách 4 phòng.
+- Lọc theo loại phòng.
+- Sắp xếp giá tăng dần.
+- Sắp xếp giá giảm dần.
+- Lọc sức chứa từ 3 người trở lên.
+- Xóa bộ lọc và khôi phục danh sách 4 phòng.
 
-1. Trao đổi với thành viên backend để xác nhận `/api/health` và `/api/rooms` đã được triển khai hay chưa.
-2. Xác nhận Base URL, cổng và cấu trúc response thực tế.
-3. Gửi request bằng Postman khi backend sẵn sàng.
-4. Cập nhật HTTP status, response, trạng thái test và minh chứng theo `docs/testing/evidence-guide.md`.
-5. Thông báo các lỗi phát hiện được cho thành viên phụ trách để phối hợp xử lý.
+**Giới hạn:** Bộ lọc ngày chưa được xác nhận hoàn chỉnh trong đợt kiểm tra này.
 
-**Trạng thái tổng thể:** Draft – Đã chuẩn bị kịch bản kiểm thử, chưa có kết quả kiểm thử API thực tế.
+## 7. Phạm vi và giới hạn kiểm thử
+
+Trong Week 1, phạm vi kiểm tra tập trung vào API, Backend, Frontend cơ bản và môi trường chạy thử.
+
+Các nội dung sau không thuộc phạm vi hoàn thành của tài liệu này:
+- Bộ kiểm thử nghiệp vụ T01–T08.
+- Kiểm thử transaction nghiệp vụ mở rộng.
+- Kiểm thử đồng thời và benchmark hiệu năng.
+- Kiểm thử toàn bộ luồng nghiệp vụ của hệ thống.
+
+Không sử dụng kết quả 11/11 unittest để khẳng định các nghiệp vụ ngoài phạm vi đã được kiểm thử.
+
+## 8. Minh chứng
+
+Các tài liệu ghi nhận công việc theo ngày nằm trong:
+
+`docs/evidence/w01/`
+
+Bao gồm:
+- `day-01-repository-and-vm.md`
+- `day-02-ui-conventions.md`
+- `day-03-shared-components.md`
+- `day-04-api-requests.md`
+
+Ảnh chụp màn hình và log bổ sung sẽ được đính kèm PR hoặc Issue khi hoàn thiện phần nộp minh chứng. Không tạo log hoặc ảnh giả để thay thế kết quả thực tế.
+
+Hướng dẫn ghi nhận minh chứng:
+
+`docs/testing/evidence-guide.md`
+
+## 9. Ghi chú phối hợp
+
+- Backend sử dụng FastAPI và PostgreSQL.
+- Frontend lấy dữ liệu phòng từ API Backend.
+- Database kiểm thử được tách khỏi database phát triển.
+- Không sử dụng kết quả kiểm thử trên dữ liệu cô lập để khẳng định các nghiệp vụ chưa được kiểm tra.
+- Các vấn đề phát sinh cần được ghi nhận trong Issue tương ứng để reviewer theo dõi.
+
+## 10. Kết luận
+
+**Trạng thái: Hoàn thành phạm vi kiểm tra Week 1.**
+
+Các nội dung đã thực hiện và có kết quả ghi nhận:
+
+- API Health check: Đạt.
+- API lấy danh sách phòng: Đạt.
+- Kiểm thử danh sách phòng rỗng: Đạt.
+- Kiểm thử lỗi kết nối database: Đạt.
+- Backend unittest: 11/11 Passed.
+- Kiểm tra dependency: Không phát hiện lỗi.
+- Frontend build: Thành công.
+- Kiểm tra thao tác lọc và sắp xếp phòng cơ bản: Đã thực hiện.
+- Kiểm tra bộ lọc ngày: Chưa xác nhận hoàn chỉnh.
+
+Kết luận này chỉ áp dụng cho phạm vi Week 1 đã thực hiện, không đại diện cho việc toàn bộ hệ thống HMS đã hoàn thành kiểm thử.

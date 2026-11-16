@@ -1,106 +1,254 @@
 # UI Conventions – HMS
 
 **Mã công việc:** HMS-W1-THU  
+**Issue:** #5 – Thiết kế layout chung, request thử và kiểm tra VM  
 **Người phụ trách:** Đỗ Thị Thanh Thư  
-**Trạng thái:** Draft – Đề xuất, chờ thống nhất với nhóm  
-**Phạm vi:** Quy ước giao diện dùng chung cho hệ thống quản lý khách sạn (HMS).
+**Phối hợp thống nhất UI:** Linh  
+**Trạng thái:** Đã thống nhất quy ước UI với thành viên phụ trách frontend  
+**Phạm vi:** Quy ước giao diện dùng chung cho Customer và Staff/Admin trong hệ thống quản lý khách sạn HMS.
 
 ## 1. Mục đích
 
-Tài liệu này đề xuất các quy ước giao diện dùng chung nhằm đảm bảo tính nhất quán giữa các trang trong hệ thống HMS. Các quy ước sẽ được điều chỉnh sau khi thống nhất với thành viên phụ trách frontend và API.
+Tài liệu quy định các quy ước giao diện dùng chung cho hệ thống HMS, nhằm đảm bảo tính nhất quán giữa các trang Customer và Staff/Admin.
 
-## 2. Ngôn ngữ và cách trình bày
+Các component dùng chung cần được thiết kế theo hướng tái sử dụng, hạn chế trùng lặp và thuận tiện cho việc mở rộng, bảo trì.
+
+AdminSidebar được xem là component riêng của khu vực Admin, không thuộc nhóm component dùng chung.
+
+## 2. Quy ước màu sắc và trình bày
+
+### 2.1. Màu sắc chủ đạo
+
+Các màu sắc giao diện được thống nhất như sau:
+
+- **Màu chủ đạo:** Be và nâu.
+- **Màu nền trang chính:** Xám.
+- **Màu nền bảng và thẻ:** Các tông màu sáng.
+- **Màu trạng thái:** Ba màu cơ bản gồm đỏ, vàng và xanh lá.
+
+Quy ước sử dụng:
+
+- Tái sử dụng mã màu đã được định nghĩa trong các component frontend hiện có.
+- Không tự ý tạo thêm mã màu khác khi chưa thống nhất.
+- Màu trạng thái cần được sử dụng nhất quán giữa các trang.
+- Không chỉ dùng màu sắc để biểu thị trạng thái; cần kết hợp nội dung chữ hoặc biểu tượng phù hợp.
+
+### 2.2. Ngôn ngữ và nội dung
 
 - Ngôn ngữ giao diện chính: Tiếng Việt.
-- Tên trường dữ liệu cần rõ ràng, dễ hiểu và phù hợp với nghiệp vụ khách sạn.
-- Các nút thao tác cần sử dụng động từ cụ thể, ví dụ: Thêm, Sửa, Xóa, Lưu, Hủy.
-- Các trang quản trị cần có bố cục nhất quán, dễ theo dõi và thao tác.
+- Nhãn trường dữ liệu cần rõ ràng, dễ hiểu và phù hợp nghiệp vụ khách sạn.
+- Nút thao tác sử dụng động từ cụ thể như Thêm, Sửa, Xóa, Lưu, Hủy, Đặt phòng.
+- Placeholder cần hướng dẫn rõ dữ liệu hoặc định dạng cần nhập.
 
-## 3. Quy ước về bố cục
+## 3. Quy ước bố cục và Header
 
-- Các trang quản trị dự kiến sử dụng những khu vực sau:
-  - Sidebar: Điều hướng giữa các chức năng.
-  - Header: Hiển thị tên trang và thông tin tài khoản.
-  - Main content: Hiển thị nội dung chính.
-  - Notification: Thông báo kết quả thao tác hoặc lỗi.
-- Bố cục cần đảm bảo tính nhất quán giữa các trang và có khả năng thích ứng với kích thước màn hình khác nhau (Responsive Layout).
-- Trên màn hình nhỏ, Sidebar có thể chuyển thành menu thu gọn.
-- Bảng dữ liệu cần có phương án hiển thị phù hợp trên màn hình nhỏ, tránh làm vỡ bố cục.
-- Bố cục cụ thể sẽ được thống nhất cùng thành viên phụ trách khởi tạo frontend.
+### 3.1. Header
 
-## 4. Quy ước về bảng dữ liệu
+Header của Customer và Staff/Admin sử dụng chung một component, cho phép truyền props để tùy chỉnh nội dung và cách hiển thị theo từng khu vực.
 
-- Các bảng dữ liệu nên có:
-  - Tiêu đề bảng hoặc tên chức năng.
-  - Tên cột rõ ràng.
-  - Dữ liệu được trình bày thống nhất.
-  - Trạng thái hiển thị dễ nhận biết.
-  - Các thao tác phù hợp như xem chi tiết, chỉnh sửa hoặc xóa nếu nghiệp vụ cho phép.
-  - Phân trang khi số lượng dữ liệu lớn và API hỗ trợ.
-- Trong quá trình tải hoặc xử lý dữ liệu:
-  - Loading: Hiển thị trạng thái đang tải.
-  - Empty State: Hiển thị khi không có dữ liệu.
-  - Error State: Hiển thị thông báo khi không thể tải dữ liệu.
+Mục tiêu:
 
-## 5. Quy ước về biểu mẫu
+- Đảm bảo giao diện nhất quán.
+- Tránh triển khai hai Header riêng có chức năng trùng lặp.
+- Cho phép điều chỉnh nội dung theo từng trang hoặc vai trò người dùng.
 
-- Các biểu mẫu cần đảm bảo:
-  - Mỗi trường có nhãn (Label) rõ ràng.
-  - Trường bắt buộc được đánh dấu.
-  - Dữ liệu nhập cần được kiểm tra hợp lệ.
-  - Hiển thị thông báo khi dữ liệu không hợp lệ.
-  - Có nút Lưu và Hủy phù hợp với từng thao tác.
-  - Nút gửi biểu mẫu cần có trạng thái đang xử lý để hạn chế gửi lặp ngoài ý muốn.
-  - Không tự ý xác định kiểu dữ liệu, trường bắt buộc hoặc quy tắc nghiệp vụ nếu chưa được xác nhận trong API contract hoặc tài liệu nghiệp vụ.
-  - Các nút và trường nhập liệu cần có nội dung hoặc nhãn rõ ràng, dễ hiểu.
+### 3.2. AdminSidebar
 
-## 6. Quy ước về trạng thái và thông báo
+- AdminSidebar là component riêng của khu vực Admin.
+- Không đưa AdminSidebar vào nhóm component dùng chung giữa Customer và Staff/Admin.
+- Các trang Admin có thể sử dụng AdminSidebar kết hợp với Header chung.
 
-- Các thành phần giao diện cần xử lý tối thiểu những trạng thái sau:
-  - Loading: Đang tải dữ liệu hoặc xử lý thao tác.
-  - Success: Thao tác thành công.
-  - Error: Có lỗi khi tải hoặc xử lý dữ liệu.
-  - Empty: Không có dữ liệu để hiển thị.
-- Cần phân biệt:
-  - Lỗi validation: Dữ liệu người dùng nhập không hợp lệ.
-  - Lỗi API: Request không thành công hoặc backend trả về lỗi.
-  - Lỗi kết nối: Không thể kết nối đến backend.
-- Thông báo lỗi cần dễ hiểu và không hiển thị thông tin nhạy cảm như mật khẩu, token hoặc thông tin kết nối cơ sở dữ liệu.
-- Màu sắc của các trạng thái cần được sử dụng thống nhất giữa các trang.
-- Không chỉ sử dụng màu sắc để biểu thị trạng thái; cần kết hợp nội dung chữ hoặc biểu tượng phù hợp.
+### 3.3. Main content
 
-## 7. Quy ước hiển thị trạng thái phòng
+- Nội dung chính được trình bày trong khu vực riêng của từng trang.
+- Bố cục cần đảm bảo khả năng thích ứng với kích thước màn hình.
+- Các thành phần dùng chung được tổ chức trong thư mục `frontend/src/components/common/`.
 
-- Cần phân biệt rõ hai nhóm trạng thái:
-  - Trạng thái vệ sinh (housekeeping_status): Phản ánh tình trạng dọn dẹp phòng.
-  - Trạng thái bảo trì (maintenance_status): Phản ánh tình trạng kỹ thuật hoặc bảo trì phòng.
-- Không đồng nhất trạng thái phòng sạch với trạng thái phòng có thể đặt. Việc xác định phòng có thể đặt cần dựa trên quy tắc nghiệp vụ và dữ liệu do backend cung cấp.
-- Các giá trị trạng thái cụ thể cần được xác nhận với thành viên phụ trách database và backend trước khi triển khai.
-- Việc hiển thị trạng thái phòng trên giao diện cần sử dụng đúng tên trường và giá trị do API cung cấp; frontend không tự suy diễn hoặc thay đổi trạng thái nghiệp vụ.
+## 4. Quy chuẩn FormField và biểu mẫu
 
-## 8. Các thành phần giao diện dùng chung dự kiến
+Component FormField được sử dụng để thống nhất cách hiển thị trường nhập liệu.
 
-| Thành phần | Mục đích |
-| :--- | :--- |
-| DataTable | Hiển thị danh sách dữ liệu |
-| FormField | Hiển thị trường nhập liệu |
-| Loading | Thông báo đang tải dữ liệu |
-| EmptyState | Hiển thị khi danh sách rỗng |
-| Notification | Thông báo kết quả thao tác |
+### 4.1. Label
+
+- Chữ in đậm.
+- Kích thước chữ: 14px.
+- Trường bắt buộc có dấu `*` màu đỏ bên cạnh nhãn.
+
+### 4.2. Input và Select
+
+- Chiều cao: 40px.
+- Bo góc: 6px.
+- Placeholder hướng dẫn rõ định dạng hoặc nội dung cần nhập.
+- Các trường nhập liệu cần có kích thước và cách trình bày nhất quán.
+
+### 4.3. Error text
+
+- Hiển thị ngay bên dưới trường nhập liệu có lỗi.
+- Màu chữ đỏ.
+- Kích thước chữ: 12px.
+- Nội dung cần nêu rõ vấn đề để người dùng có thể sửa.
+
+### 4.4. Button
+
+- Chiều cao: 40px.
+- Bo góc: 6px.
+- Nội dung nút cần thể hiện rõ hành động.
+
+### 4.5. Nguyên tắc validation
+
+- Kiểm tra dữ liệu nhập theo quy tắc nghiệp vụ và API contract.
+- Không tự ý xác định trường bắt buộc hoặc điều kiện nghiệp vụ khi chưa có căn cứ.
+- Khi đang xử lý yêu cầu, cần hạn chế việc người dùng gửi lặp thao tác.
+
+## 5. Quy chuẩn DataTable
+
+Component DataTable được sử dụng để hiển thị dữ liệu dạng bảng.
+
+### 5.1. Tiêu đề và dữ liệu
+
+- Tiêu đề cột: Căn giữa.
+- Dữ liệu dạng số: Căn phải.
+- Dữ liệu dạng chữ: Căn trái.
+- Tên cột cần rõ ràng, phù hợp với nội dung dữ liệu.
+
+### 5.2. Phân trang
+
+- Phân trang được đặt chính giữa, bên dưới bảng dữ liệu.
+- Chỉ sử dụng khi phù hợp với lượng dữ liệu và khả năng hỗ trợ của API.
+
+### 5.3. Loading
+
+Trong quá trình tải dữ liệu hoặc xử lý yêu cầu, hiển thị thông báo phù hợp:
+
+- `Đang tải dữ liệu…`
+- `Đang xử lý yêu cầu…`
+
+### 5.4. Empty
+
+Khi không có dữ liệu phù hợp, hiển thị:
+
+`Không tìm thấy dữ liệu phù hợp với yêu cầu`
+
+Nếu người dùng đang sử dụng bộ lọc, cần có nút xóa bộ lọc để khôi phục danh sách.
+
+### 5.5. Error
+
+- Hiển thị khung cảnh báo màu đỏ.
+- Nội dung thể hiện lỗi xảy ra.
+- Thông báo cần dễ hiểu và không để lộ thông tin nhạy cảm.
+
+## 6. Quy chuẩn Notification và StatusBadge
+
+### 6.1. Notification
+
+Component Notification được sử dụng để thông báo kết quả thao tác.
+
+Quy ước:
+
+- Vị trí hiển thị: Góc trên bên phải giao diện.
+- Xuất hiện sau thao tác của người dùng, ví dụ: đặt phòng hoặc thực hiện các thao tác dữ liệu.
+- Thời gian hiển thị dự kiến: 2–3 giây.
+- Màu chữ được thể hiện theo trạng thái thông báo.
+- Nội dung ngắn gọn, dễ hiểu.
+
+Các trạng thái cần hỗ trợ:
+
+- Success: Thao tác thành công.
+- Error: Thao tác thất bại.
+- Warning: Cảnh báo người dùng.
+- Info: Thông tin bổ sung khi cần thiết.
+
+### 6.2. StatusBadge
+
+- Sử dụng component StatusBadge hiện có.
+- Hiển thị trạng thái dưới dạng nhãn trực quan.
+- Màu sắc sử dụng theo quy ước màu trạng thái chung.
+- Nội dung chữ cần thể hiện rõ trạng thái, không chỉ dựa vào màu sắc.
+
+Đối với trạng thái phòng, cần phân biệt:
+- `housekeeping_status`: Trạng thái vệ sinh phòng.
+- `maintenance_status`: Trạng thái bảo trì phòng.
+
+Không đồng nhất trạng thái vệ sinh với trạng thái có thể đặt phòng. Việc xác định phòng có thể đặt phải tuân theo quy tắc nghiệp vụ và dữ liệu backend.
+
+## 7. Danh sách component dùng chung
+
+Các component dùng chung được thống nhất gồm:
+
+| Component | Chức năng |
+|---|---|
+| Header | Hiển thị khu vực tiêu đề và nội dung điều hướng chung, tùy chỉnh bằng props |
+| FilterBar | Tổ chức các trường lọc và thao tác đặt lại bộ lọc |
+| DataTable | Hiển thị danh sách dữ liệu dạng bảng |
+| FormField | Hiển thị trường nhập liệu theo quy chuẩn chung |
 | StatusBadge | Hiển thị trạng thái nghiệp vụ |
-| ConfirmDialog | Xác nhận trước các thao tác quan trọng |
+| Notification | Thông báo kết quả thao tác |
 
-Đây là danh sách đề xuất, chưa phải các component đã được triển khai.
+Các component trên được tổ chức trong `frontend/src/components/common/`.
 
-## 9. Các nội dung cần thống nhất với nhóm
+**Component riêng của Admin:**
 
-- Màu sắc và phong cách giao diện chung.
-- Cấu trúc Sidebar và Header.
-- Quy ước đặt tên component.
-- Cấu trúc dữ liệu trả về từ API.
-- Danh sách giá trị trạng thái phòng chính thức.
-- Cách hiển thị thông báo lỗi từ backend.
+- AdminSidebar: Phục vụ điều hướng trong khu vực Admin, không thuộc nhóm component dùng chung.
 
-## 10. Trạng thái tài liệu
+## 8. Quy ước bộ lọc và dữ liệu phòng
 
-Tài liệu hiện ở mức đề xuất cho tuần 1. Sau khi frontend được khởi tạo và các thành viên thống nhất quy ước, nội dung sẽ được cập nhật theo triển khai thực tế.
+### 8.1. Bộ lọc
+
+Các bộ lọc tầng và giá phòng được xác nhận có API hỗ trợ.
+
+Nguyên tắc:
+
+- Frontend gửi điều kiện lọc theo API contract.
+- Không tự lọc theo những trường chưa được backend hỗ trợ.
+- Khi xóa bộ lọc, danh sách cần được khôi phục theo dữ liệu mặc định.
+- Giao diện cần phản ánh đúng điều kiện lọc đang được áp dụng.
+
+### 8.2. Hình ảnh phòng
+
+Hình ảnh phòng dự kiến được lấy từ database.
+
+Frontend cần sử dụng dữ liệu hình ảnh được backend cung cấp, không tự giả định đường dẫn hoặc nguồn ảnh khi chưa có API contract tương ứng.
+
+### 8.3. Thông tin thanh toán
+
+Trường thông tin thanh toán được giữ lại trong biểu mẫu đặt phòng.
+
+Cách hiển thị và xử lý dữ liệu thanh toán cần phù hợp với nghiệp vụ và API contract.
+
+## 9. Kiểm tra triển khai thực tế
+
+Các component dùng chung đã được triển khai trong frontend:
+
+- DataTable.
+- FilterBar.
+- FormField.
+- Header.
+- Notification.
+- StatusBadge.
+
+Các chức năng frontend đã được kiểm tra trên môi trường local:
+
+- Hiển thị danh sách phòng từ API.
+- Lọc theo loại phòng.
+- Sắp xếp giá phòng tăng dần và giảm dần.
+- Lọc theo sức chứa.
+- Xóa bộ lọc và khôi phục danh sách.
+- Kiểm tra giao diện component dùng chung.
+- Kiểm tra quá trình build frontend.
+
+Các quy chuẩn được thống nhất với Linh là cơ sở để tiếp tục điều chỉnh giao diện giữa Customer và Staff/Admin.
+
+## 10. Nội dung cần xác nhận thêm
+
+Một số nội dung liên quan đến wireframe và nghiệp vụ cần được xác nhận trước khi triển khai chi tiết:
+
+- RoomCard hiển thị thông tin loại phòng hay từng phòng vật lý.
+- Cấu trúc dữ liệu và API cung cấp hình ảnh phòng từ database.
+- Cấu trúc trường thanh toán và cách xử lý trong quy trình đặt phòng.
+- Chi tiết tham số API cho bộ lọc tầng và giá phòng.
+
+## 11. Trạng thái tài liệu
+
+Các quy ước về màu sắc, Header, FormField, DataTable, Notification, StatusBadge và danh sách component dùng chung đã được thống nhất với thành viên phụ trách frontend.
+
+Tài liệu được cập nhật theo thỏa thuận phối hợp cho Issue #5. Những nội dung liên quan đến dữ liệu nghiệp vụ và chi tiết API sẽ tiếp tục được đối chiếu với backend/database trước khi hoàn thiện triển khai.

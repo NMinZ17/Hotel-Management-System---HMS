@@ -5,44 +5,53 @@
 **Người phụ trách:** Đỗ Thị Thanh Thư  
 **Reviewer:** maingoclinh1681  
 **Tuần thực hiện:** Week 1 (09/11/2026 – 15/11/2026)  
-**Trạng thái:** Draft – Đang chuẩn bị môi trường, chưa xác nhận triển khai VM  
-**Ngày cập nhật:** 13/11/2026
+**Trạng thái:** Draft – Đã chuẩn bị và kiểm tra môi trường cá nhân; chờ nhóm thống nhất hạ tầng VM chính thức  
+**Ngày cập nhật:** 17/11/2026
 
 ---
 
 ## 1. Mục đích
 
-Tài liệu ghi nhận các yêu cầu chuẩn bị môi trường phát triển và thông tin cần thu thập để kiểm tra khả năng sẵn sàng của môi trường triển khai hệ thống Hotel Management System (HMS) trong tuần 1.
+Tài liệu ghi nhận các yêu cầu chuẩn bị môi trường phát triển và thông tin kiểm tra khả năng sẵn sàng của môi trường triển khai hệ thống Hotel Management System (HMS).
 
 Nội dung tập trung vào:
 
-- Kiểm tra các công cụ phát triển đã cài đặt trên máy của người phụ trách.
-- Ghi nhận các công nghệ và thành phần cần thiết cho frontend, backend và database.
-- Thu thập thông tin và xác định trạng thái truy cập của ba máy ảo (VM).
-- Đề xuất phương án kết nối giữa frontend, backend và PostgreSQL để nhóm xem xét.
-- Xác định các bước kiểm tra dịch vụ và điều kiện cần thiết trước khi thực hiện kiểm thử tích hợp.
+- Kiểm tra các công cụ phát triển trên máy của người phụ trách.
+- Ghi nhận công nghệ và thành phần cần thiết cho Frontend, Backend và Database.
+- Kiểm tra mã nguồn, cấu hình và khả năng khởi chạy các thành phần.
+- Chuẩn bị ba VM thử nghiệm theo kiến trúc Frontend – Backend – Database.
+- Kiểm tra kết nối mạng giữa ba VM.
+- Đề xuất phương án triển khai để nhóm xem xét và thống nhất.
+- Xác định những điều kiện còn thiếu trước khi triển khai môi trường dùng chung.
 
-Tài liệu này thuộc phạm vi chuẩn bị môi trường của tuần 1, không phải hướng dẫn triển khai hoàn chỉnh. Những thông tin chưa được nhóm hoặc người quản lý VM xác nhận sẽ được đánh dấu là **Pending** hoặc **Dự kiến**.
+**Phạm vi:** Đây là tài liệu chuẩn bị môi trường và ghi nhận kết quả kiểm tra ban đầu. Ba VM hiện tại do người phụ trách tự tạo trên máy cá nhân, chưa được nhóm thống nhất là hạ tầng triển khai chính thức.
+
+Những nội dung chưa được xác nhận sẽ được ghi rõ là Pending, Chờ nhóm xác nhận hoặc Chưa kiểm tra.
 
 ## 2. Công nghệ và công cụ sử dụng
 
-Các công nghệ và công cụ được ghi nhận theo định hướng dự án và môi trường làm việc hiện tại:
-
 | Thành phần | Công nghệ / Công cụ | Mục đích |
 |---|---|---|
-| Frontend | React + Vite | Xây dựng giao diện quản trị và vận hành |
+| Frontend | React + Vite | Xây dựng giao diện người dùng |
 | Backend | Python + FastAPI | Xây dựng REST API |
+| ASGI Server | Uvicorn | Khởi chạy ứng dụng FastAPI |
 | Database | PostgreSQL | Lưu trữ dữ liệu hệ thống |
-| API Testing | Postman | Gửi request và kiểm thử API |
-| Web Server / Reverse Proxy | NGINX (dự kiến) | Phục vụ frontend và chuyển tiếp request API nếu được nhóm lựa chọn |
+| Database Driver | Psycopg | Kết nối PostgreSQL từ Backend |
+| Data Validation | Pydantic | Kiểm tra và xử lý dữ liệu đầu vào |
+| Environment Config | python-dotenv | Đọc cấu hình môi trường |
+| API Testing | PowerShell / curl / unittest | Gửi request và kiểm thử API |
+| API Client | Postman | Kiểm thử API thủ công |
+| Web Server / Reverse Proxy | NGINX (dự kiến) | Phục vụ frontend và chuyển tiếp request API nếu nhóm lựa chọn |
 | Code Editor | Visual Studio Code | Phát triển và chỉnh sửa mã nguồn |
 | Version Control | Git + GitHub | Quản lý mã nguồn và phối hợp nhóm |
+| Virtualization | Oracle VirtualBox | Tạo và quản lý VM thử nghiệm |
 
 **Lưu ý:**
 
-- React, Vite, Python, FastAPI và PostgreSQL cần được đối chiếu với cấu hình thực tế của repository.
-- NGINX hiện được ghi nhận là phương án dự kiến, chưa khẳng định đã được nhóm thống nhất triển khai.
-- Phiên bản chính thức của công cụ và thư viện cần căn cứ vào các file cấu hình của repository và sự thống nhất của nhóm.
+- Các công nghệ Backend cần đối chiếu với `backend/requirements.txt`.
+- NGINX là phương án dự kiến, chưa phải cấu hình triển khai chính thức.
+- Phiên bản công cụ cần căn cứ vào cấu hình repository và sự thống nhất của nhóm.
+- Không mặc định môi trường cá nhân của người phụ trách giống môi trường của tất cả thành viên.
 
 ## 3. Yêu cầu môi trường phát triển trên máy thành viên
 
@@ -51,33 +60,33 @@ Các công nghệ và công cụ được ghi nhận theo định hướng dự 
 | Công cụ | Mục đích | Lệnh kiểm tra |
 |---|---|---|
 | Git | Quản lý mã nguồn | `git --version` |
-| Node.js | Chạy môi trường frontend | `node --version` |
-| npm | Quản lý package frontend | `npm --version` |
-| Python | Chạy backend FastAPI | `python --version` |
-| PostgreSQL | Quản lý database | `psql --version` |
-| pgAdmin 4 | Quản trị database bằng giao diện | Mở pgAdmin 4 |
+| Node.js | Chạy môi trường Frontend | `node --version` |
+| npm | Quản lý package Frontend | `npm --version` |
+| Python | Chạy Backend | `python --version` |
+| PostgreSQL | Quản lý Database | `psql --version` |
+| pgAdmin 4 | Quản trị Database bằng giao diện | Mở pgAdmin 4 |
 | Postman | Kiểm thử API | Mở Postman |
 | Visual Studio Code | Chỉnh sửa mã nguồn | Mở VS Code |
+| Oracle VirtualBox | Quản lý máy ảo | `VBoxManage --version` |
 
 ### 3.2. Phiên bản đã kiểm tra trên máy phụ trách
 
-Các phiên bản dưới đây là thông tin đã kiểm tra trên máy của người phụ trách, không đại diện cho toàn bộ máy thành viên hoặc máy ảo.
+Các phiên bản dưới đây là thông tin đã kiểm tra trên máy Windows cá nhân, không đại diện cho toàn bộ máy thành viên hoặc các VM.
 
-| Công cụ | Phiên bản đã kiểm tra |
+| Công cụ | Phiên bản |
 |---|---|
 | Git | 2.55.0.windows.5 |
 | Node.js | v26.13.0 |
 | npm | 11.20.0 |
 | Python | 3.13.15 |
 | PostgreSQL / psql | 18.6 |
+| Oracle VirtualBox | Đã cài đặt và sử dụng |
 
-Các thành viên cần tự kiểm tra và ghi nhận phiên bản trên máy của mình.
-
-Các phiên bản trên mới phản ánh trạng thái cài đặt và kiểm tra phiên bản. Khả năng tương thích với cấu hình chính thức của dự án cần được đối chiếu thêm với repository và nhóm.
+Các thành viên cần tự kiểm tra phiên bản trên máy của mình và đối chiếu với yêu cầu của repository.
 
 ### 3.3. Kiểm tra sau khi cài đặt
 
-Mở PowerShell hoặc Terminal và chạy:
+Mở PowerShell hoặc Terminal:
 
 ```powershell
 git --version
@@ -87,358 +96,345 @@ python --version
 psql --version
 ```
 
-Nếu lệnh không được nhận diện, cần kiểm tra lại việc cài đặt và cấu hình biến môi trường PATH.
+Nếu lệnh không được nhận diện, kiểm tra lại quá trình cài đặt và biến môi trường PATH.
 
-Việc kiểm tra phiên bản không đồng nghĩa với việc frontend, backend hoặc database của dự án đã chạy thành công.
+Việc kiểm tra phiên bản không đồng nghĩa với việc các dịch vụ của dự án đã hoạt động thành công.
 
 ## 4. Yêu cầu môi trường chạy hệ thống
 
 ### 4.1. Frontend
 
-- Sử dụng React và Vite theo cấu hình frontend của nhóm.
-- Cài đặt dependency theo các file cấu hình package được cung cấp trong repository.
-- Chạy frontend theo hướng dẫn trong README.
-- Trong môi trường phát triển, frontend có thể chạy bằng Vite development server.
-- Khi triển khai, frontend có thể được build thành các tệp tĩnh để web server phục vụ. Việc sử dụng NGINX cần được nhóm xác nhận.
+Frontend sử dụng React và Vite theo cấu hình repository.
 
-Frontend hiện đang chờ PR khởi tạo của thành viên phụ trách được merge trước khi tiếp tục kiểm tra trên nhánh tích hợp.
+Các yêu cầu:
 
-Các lệnh dự kiến sau khi mã nguồn frontend đã sẵn sàng và cấu trúc repository được xác nhận:
+- Cài đặt dependencies theo `package.json` và `package-lock.json`.
+- Chạy Frontend bằng Vite trong môi trường phát triển.
+- Build thành các tệp tĩnh khi cần chuẩn bị triển khai.
+- Cấu hình địa chỉ API phù hợp với môi trường chạy.
+- NGINX chỉ được sử dụng nếu nhóm thống nhất phương án này.
 
-Cài đặt dependency:
-
-```powershell
-cd frontend
-npm ci
-```
-
-Chạy môi trường phát triển:
+Các lệnh kiểm tra:
 
 ```powershell
-npm run dev
+npm --prefix frontend run build
 ```
 
-Build frontend:
+**Trạng thái thực tế:**
 
-```powershell
-npm run build
-```
-
-Chỉ thực hiện các lệnh trên khi thư mục frontend và các file cấu hình tương ứng đã có trong repository.
+- Mã nguồn Frontend đã được chuẩn bị.
+- Các shared components đã được xây dựng.
+- Lệnh `npm --prefix frontend run build` đã chạy thành công.
+- Giao diện đã được kiểm tra với API, hiển thị 4 phòng, lọc loại phòng, sắp xếp giá và lọc sức chứa.
+- Chưa xác nhận toàn bộ chức năng giao diện và chưa kiểm tra triển khai Frontend bằng NGINX.
 
 ### 4.2. Backend
 
-Backend được định hướng xây dựng bằng Python và FastAPI. Qua kiểm tra nhánh `origin/trang/checkpoint_1`, ghi nhận nhánh này đã có một số file mã nguồn Backend. Tuy nhiên, chưa xác nhận ứng dụng đã khởi chạy và hoạt động hoàn chỉnh.
+Backend sử dụng Python và FastAPI.
 
-**Các công nghệ và thư viện được khai báo:**
+Các thư viện được khai báo trong `backend/requirements.txt`:
 
-- FastAPI: xây dựng REST API.
-- Uvicorn: máy chủ ASGI để chạy ứng dụng.
-- SQLAlchemy: hỗ trợ truy vấn và thao tác với cơ sở dữ liệu.
-- Psycopg: thư viện kết nối PostgreSQL.
-- python-dotenv: hỗ trợ đọc cấu hình môi trường.
-- requests: hỗ trợ gửi HTTP request.
+| Thư viện | Mục đích |
+|---|---|
+| FastAPI | Xây dựng REST API |
+| Uvicorn | Chạy ứng dụng ASGI |
+| Psycopg | Kết nối PostgreSQL |
+| Pydantic | Kiểm tra dữ liệu |
+| python-dotenv | Đọc cấu hình môi trường |
 
-File khai báo dependencies: `backend/requirements.txt`.
+Các thư viện phục vụ kiểm thử được khai báo riêng trong `backend/requirements-dev.txt`.
 
-File mã nguồn API hiện có: `backend/app/main.py`. Ứng dụng khai báo tên `HMS Hotel API`, phiên bản `0.4.0` và có endpoint `POST /api/bookings` phục vụ chức năng tạo đặt phòng.
+File mã nguồn chính:
 
-**Các API theo định hướng tích hợp:**
+- `backend/app/main.py`
+- `backend/app/config.py`
+- `backend/app/db.py`
+- `backend/app/routers/rooms.py`
+- `backend/app/schemas.py`
 
-Theo tài liệu `docs/api-contract.md`, hai endpoint được đề xuất cho tuần 1 gồm:
-
-- `GET /api/health`: kiểm tra trạng thái hoạt động của Backend.
-- `GET /api/rooms`: lấy danh sách phòng phục vụ tích hợp Frontend – Backend – Database.
-
-Các endpoint trên hiện được mô tả trong hợp đồng API ở trạng thái đề xuất, chưa xác nhận đã được triển khai trong mã nguồn `backend/app/main.py`. Vì vậy, cần thành viên phụ trách Backend xác nhận và cập nhật hợp đồng API trước khi Frontend tích hợp chính thức.
-
-**Lệnh cài đặt và khởi chạy dự kiến:**
-
-Theo cấu trúc hiện tại và hướng dẫn trong `docs/getting-started.md`, có thể tham khảo các lệnh sau từ thư mục `backend`:
+Các lệnh cài đặt và khởi chạy trong môi trường phát triển:
 
 ```powershell
+cd backend
+
 python -m venv .venv
+
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
-Đây là các lệnh dự kiến, chưa được xác nhận chạy thành công trên môi trường triển khai của nhóm.
+**Trạng thái thực tế:**
 
-**Lưu ý về trạng thái triển khai:**
+- Backend đã được chuẩn bị và chạy trên môi trường thử nghiệm.
+- API Health trả HTTP 200.
+- API Rooms trả HTTP 200 và danh sách 4 phòng.
+- Backend đã kết nối được PostgreSQL trong quá trình kiểm tra.
+- Bộ unittest Backend có 11/11 test thành công.
+- `python -m pip check` trả về `No broken requirements found.`
 
-- Mã nguồn `backend/app/main.py` hiện tham chiếu `app.database.engine`, nhưng nhánh được kiểm tra chưa có file `backend/app/database.py`.
-- Chưa xác nhận đầy đủ cấu hình kết nối PostgreSQL và các biến môi trường cần thiết.
-- Chưa xác nhận hai endpoint `GET /api/health` và `GET /api/rooms` đã được triển khai.
-- Chưa có bằng chứng xác nhận Backend khởi động và hoạt động thành công.
+Lệnh kiểm thử:
 
-Do đó, Backend hiện được ghi nhận ở trạng thái đã có một số mã nguồn và dependencies, nhưng chưa đủ cơ sở kết luận đã triển khai hoàn chỉnh. Các lệnh cài đặt, khởi chạy và API tích hợp cần được thành viên phụ trách xác nhận trước khi sử dụng làm quy trình triển khai chính thức.
+```powershell
+python -m unittest discover -s tests -v
+```
 
 ### 4.3. Database
 
-Dự án sử dụng PostgreSQL làm hệ quản trị cơ sở dữ liệu.
+Dự án sử dụng PostgreSQL.
 
-**Các file SQL hiện có:**
+Các file SQL trong repository:
 
 | File | Chức năng |
 |---|---|
-| `database/schema.sql` | Khởi tạo cấu trúc 28 bảng dữ liệu |
-| `database/seed.sql` | Thêm dữ liệu mẫu phục vụ thử nghiệm |
-| `database/queries.sql` | Chứa các truy vấn SQL |
-| `database/migrations/add_booking_events.sql` | Bổ sung cấu trúc và chức năng ghi nhận sự kiện đặt phòng |
-| `database/migrations/add_booking_events_rollback.sql` | Hỗ trợ hoàn tác migration |
+| `database/schema.sql` | Khởi tạo cấu trúc bảng |
+| `database/seed.sql` | Thêm dữ liệu mẫu |
+| `database/queries.sql` | Các truy vấn SQL |
+| `database/migrations/` | Các script migration |
 | `database/migrations/verify_final_state.sql` | Kiểm tra trạng thái sau migration |
 
-**Quy trình khởi tạo dự kiến:**
+Tên database phát triển được sử dụng trong môi trường hiện tại là `hms_dev`.
 
-1. Tạo database PostgreSQL dành cho môi trường phát triển.
-2. Thực thi `database/schema.sql` để tạo cấu trúc bảng.
-3. Thực thi `database/seed.sql` để thêm dữ liệu giả.
-4. Thực thi migration theo đúng thứ tự và hướng dẫn của thành viên phụ trách CSDL.
-5. Kiểm tra cấu trúc bảng, dữ liệu mẫu và kết quả migration.
+**Trạng thái thực tế:**
 
-Tên database `hms_dev` được đề cập trong tài liệu `docs/getting-started.md`, hiện được ghi nhận là tên đề xuất cho môi trường phát triển và cần được nhóm xác nhận.
+- PostgreSQL đã được cài đặt và sử dụng trên môi trường thử nghiệm.
+- Backend xác nhận tìm thấy bảng `room` và `room_type`.
+- Database xác nhận tồn tại:
+  - `public.room`
+  - `public.room_type`
+- API Rooms đã truy xuất và trả về 4 phòng.
 
 **Lưu ý:**
 
-- Schema ban đầu định nghĩa 28 bảng. Migration `add_booking_events.sql` bổ sung bảng `schema_migrations`, bảng `booking_events`, đồng thời điều chỉnh cơ chế sinh ID cho một số bảng và bổ sung ràng buộc kiểm tra ngày đặt phòng.
-- Chỉ sử dụng dữ liệu giả trong quá trình thử nghiệm.
-- Không commit mật khẩu, thông tin kết nối nhạy cảm hoặc file backup chứa dữ liệu cá nhân.
-- Cần xác nhận thứ tự thực thi SQL và khả năng hoàn tác trước khi áp dụng trên môi trường dùng chung.
-- Chưa xác nhận Database đã được khởi tạo và kiểm thử thành công trên các máy thành viên.
+- Không commit mật khẩu, thông tin kết nối nhạy cảm hoặc file backup Database.
+- Không chạy lại migration hoặc rollback trên môi trường có dữ liệu cần bảo toàn nếu chưa xác định rõ tác động.
+- Cấu trúc Database chính thức cần căn cứ vào schema và migration đã được nhóm thống nhất.
 
 ## 5. Phương án triển khai ba VM
 
-### 5.1. Kiến trúc ba VM dự kiến – Chờ nhóm xác nhận
+### 5.1. Trạng thái hiện tại
 
-Đề xuất phân chia ba máy ảo theo vai trò để nhóm xem xét:
+Người phụ trách đã tự tạo ba VM bằng Oracle VirtualBox trên máy Windows cá nhân để thử nghiệm kiến trúc ba tầng.
+
+**Ba VM này chưa phải hạ tầng chính thức của nhóm.**
+
+Chúng được sử dụng để:
+
+- Thử nghiệm cách phân chia Frontend, Backend và Database.
+- Kiểm tra kết nối mạng giữa các thành phần.
+- Đánh giá cấu hình tài nguyên.
+- Chuẩn bị minh chứng kỹ thuật ban đầu.
+- Làm cơ sở trao đổi với các thành viên về phương án VM dùng chung.
+
+### 5.2. Thông tin ba VM thử nghiệm
+
+| Máy ảo | Vai trò thử nghiệm | Host-only IP | CPU | RAM | Disk |
+|---|---|---|---:|---:|---:|
+| HMS-VM1-Frontend | Frontend | `192.168.56.103` | 1 vCPU | 1536 MB | 15 GB |
+| HMS-VM2-Backend | Backend | `192.168.56.102` | 1 vCPU | 1536 MB | 15 GB |
+| HMS-VM3-Database | Database | `192.168.56.101` | 1 vCPU | 1536 MB | 15 GB |
+| **Tổng** | **3 VM** | | **3 vCPU** | **4608 MB** | **45 GB** |
+
+Thông tin bổ sung:
+
+- Công cụ ảo hóa: Oracle VirtualBox.
+- Máy chủ vật lý: Windows cá nhân.
+- Guest OS được cấu hình trong VirtualBox: Ubuntu 24.04 LTS 64-bit.
+- Adapter 1: NAT.
+- Adapter 2: Host-only.
+- Định dạng ổ đĩa: VDI.
+- Dung lượng `Capacity`: 15360 MB mỗi VM.
+
+Lưu ý: Dung lượng 15 GB là dung lượng tối đa của ổ đĩa ảo, không phải dung lượng thực tế đang chiếm trên máy Windows. Phiên bản hệ điều hành thực tế bên trong từng guest chưa được xác minh độc lập.
+
+### 5.3. Kiến trúc thử nghiệm
 
 ```text
-                 Người dùng / Trình duyệt
-                           |
-                           v
-                 VM1 – Frontend / NGINX
-                    (Dự kiến)
-                           |
-                    HTTP API nội bộ
-                           |
-                           v
-                     VM2 – Backend
-                    (Dự kiến)
-                     FastAPI
-                           |
-                Kết nối PostgreSQL nội bộ
-                           |
-                           v
-                    VM3 – Database
-                    (Dự kiến)
-                    PostgreSQL
+             HOST WINDOWS
+          Oracle VirtualBox
+                  |
+          Host-only Network
+           192.168.56.0/24
+                  |
+                  v
+       +----------------------+
+       | VM1 - Frontend       |
+       | 192.168.56.103       |
+       | React / Vite         |
+       +----------------------+
+                  |
+             HTTP :8000
+                  |
+                  v
+       +----------------------+
+       | VM2 - Backend        |
+       | 192.168.56.102       |
+       | FastAPI / Uvicorn    |
+       +----------------------+
+                  |
+        PostgreSQL TCP :5432
+                  |
+                  v
+       +----------------------+
+       | VM3 - Database       |
+       | 192.168.56.101       |
+       | PostgreSQL           |
+       +----------------------+
 ```
 
-Vai trò đề xuất:
+Đây là kiến trúc thử nghiệm đã được kiểm tra kết nối cơ bản, không phải sơ đồ triển khai chính thức được nhóm phê duyệt.
 
-**VM1 – Frontend / NGINX**
+### 5.4. Kết quả kiểm tra kết nối
 
-- Phục vụ frontend React đã build.
-- Nhận request từ trình duyệt.
-- Có thể reverse proxy các request `/api` đến VM2 nếu nhóm lựa chọn NGINX.
+| Mã kiểm tra | Nội dung | Kết quả |
+|---|---|---|
+| VM-W1-01 | VM1 gọi `GET /api/health` trên VM2 | HTTP 200 |
+| VM-W1-02 | VM1 gọi `GET /api/rooms` trên VM2 | HTTP 200, trả về 4 phòng |
+| VM-W1-03 | PostgreSQL trên VM3 lắng nghe tại `192.168.56.101:5432` | LISTEN |
+| VM-W1-04 | VM2 kiểm tra TCP tới VM3 bằng `nc -vz 192.168.56.101 5432` | succeeded |
+| VM-W1-05 | Backend khởi động và tìm thấy bảng `room`, `room_type` | Đã xác nhận qua log |
 
-**VM2 – Backend**
+**Giới hạn xác minh:**
 
-- Chạy ứng dụng FastAPI.
-- Xử lý nghiệp vụ.
-- Truy vấn và cập nhật dữ liệu thông qua PostgreSQL.
+- `nc succeeded` chỉ xác nhận kết nối TCP, không tự chứng minh đăng nhập PostgreSQL và truy vấn SQL từ VM2.
+- Log Backend đã xác nhận kết nối PostgreSQL trong môi trường thử nghiệm, nhưng cần phân biệt với kiểm tra quyền truy cập từ các máy khác.
+- Chưa kiểm tra quyền truy cập VM từ máy tính riêng của các thành viên.
 
-**VM3 – Database**
+### 5.5. Các nội dung cần nhóm thống nhất
 
-- Chạy PostgreSQL.
-- Lưu trữ database HMS.
-- Chỉ cho phép kết nối từ các nguồn được cấp quyền.
+Trước khi coi môi trường là hạ tầng chính thức, nhóm cần thống nhất:
 
-Đây là sơ đồ đề xuất để chuẩn bị kiểm tra môi trường, không phải phân công VM chính thức. Vai trò thực tế của từng VM cần được nhóm xác nhận trước khi triển khai.
+1. Nhà cung cấp VM: máy cá nhân, máy chủ dùng chung hoặc dịch vụ cloud.
+2. Số lượng VM và cách phân chia vai trò.
+3. CPU, RAM và dung lượng lưu trữ.
+4. Hệ điều hành và phiên bản phần mềm.
+5. IP hoặc hostname và phương thức truy cập.
+6. Quyền truy cập của từng thành viên.
+7. Người chịu trách nhiệm quản lý và bảo trì.
+8. Thời gian VM sẵn sàng để nhóm sử dụng.
 
-### 5.2. Thông tin cần thu thập cho từng VM
+**Trạng thái:** Pending – Chờ nhóm thống nhất.
 
-| Thông tin | VM1 | VM2 | VM3 |
-|---|---|---|---|
-| Vai trò | Frontend / NGINX (dự kiến) | FastAPI (dự kiến) | PostgreSQL (dự kiến) |
-| Nhà cung cấp | Pending | Pending | Pending |
-| Hệ điều hành | Pending | Pending | Pending |
-| CPU / RAM | Pending | Pending | Pending |
-| Dung lượng ổ đĩa | Pending | Pending | Pending |
-| IP hoặc hostname | Pending | Pending | Pending |
-| Thời gian được cấp quyền | Pending | Pending | Pending |
-| Người quản lý | Pending | Pending | Pending |
-| Trạng thái truy cập | Chưa xác nhận | Chưa xác nhận | Chưa xác nhận |
-
-Không tự điền IP, thông tin đăng nhập hoặc cấu hình tài nguyên khi chưa được người quản lý VM cung cấp.
-
-### 5.3. Thông tin cần nhóm xác nhận
-
-- Vai trò chính thức của từng VM.
-- Nhà cung cấp VM và cách truy cập.
-- Hệ điều hành của từng VM.
-- CPU, RAM và dung lượng lưu trữ.
-- IP hoặc hostname nội bộ.
-- Quyền truy cập và thời gian được cấp.
-- Quy tắc kết nối giữa ba VM.
-- Người chịu trách nhiệm quản lý từng VM.
-
-Người cung cấp thông tin VM: **Pending – Chờ nhóm xác nhận.**
+Ba VM cá nhân hiện tại chỉ là môi trường thử nghiệm và minh chứng kỹ thuật ban đầu. Không tự động chuyển chúng thành môi trường chính thức nếu chưa có sự đồng ý của nhóm.
 
 ## 6. Yêu cầu kết nối mạng dự kiến
 
-Các cổng dưới đây là cổng mặc định hoặc phương án kỹ thuật dự kiến, chưa phải cấu hình đã được xác nhận trên VM.
-
-| Dịch vụ | Cổng mặc định | Phạm vi truy cập dự kiến |
+| Dịch vụ | Cổng | Phạm vi truy cập dự kiến |
 |---|---:|---|
-| HTTP | 80 | Người dùng truy cập VM1 nếu sử dụng HTTP |
-| HTTPS | 443 | Người dùng truy cập VM1 nếu cấu hình TLS |
-| FastAPI / Uvicorn | 8000 | VM1 kết nối VM2 qua mạng nội bộ nếu sử dụng cổng mặc định |
-| PostgreSQL | 5432 | VM2 kết nối VM3 qua mạng nội bộ nếu sử dụng cổng mặc định |
+| HTTP | 80 | Trình duyệt truy cập Frontend nếu sử dụng HTTP |
+| HTTPS | 443 | Trình duyệt truy cập Frontend nếu cấu hình TLS |
+| FastAPI / Uvicorn | 8000 | Frontend kết nối Backend qua mạng nội bộ |
+| PostgreSQL | 5432 | Backend kết nối Database qua mạng nội bộ |
 
 Nguyên tắc:
 
 - Không mặc định PostgreSQL phải mở trực tiếp ra Internet.
 - Không mặc định Uvicorn phải công khai cổng 8000.
 - Chỉ mở các cổng cần thiết theo kiến trúc được nhóm thống nhất.
-- Giới hạn nguồn truy cập theo vai trò và yêu cầu của nhóm.
+- Giới hạn nguồn truy cập theo vai trò và yêu cầu bảo mật.
 - Không đưa mật khẩu hoặc thông tin xác thực vào Git.
 - Cấu hình firewall, TLS và quyền truy cập cần được người quản lý VM xác nhận.
 
-**Lưu ý:** Cấu hình mạng thực tế phải căn cứ vào sơ đồ triển khai được nhóm thống nhất và quyền quản trị VM được cấp.
+Các cổng trên là cổng mặc định hoặc phương án kỹ thuật dự kiến; không phải toàn bộ cấu hình đã được phê duyệt cho môi trường dùng chung.
 
-### 7. Kiểm tra từng VM và dịch vụ sau khi được cấp quyền
+## 7. Kiểm tra dịch vụ
 
-Các bước dưới đây là checklist kiểm tra dự kiến, chỉ thực hiện sau khi nhóm được cấp VM, thông tin kết nối và cấu hình triển khai chính thức. Kết quả cần được ghi nhận để phục vụ kiểm tra và nghiệm thu môi trường.
+### 7.1. Frontend
 
-#### 7.1. Kiểm tra VM Frontend
+Các nội dung đã kiểm tra:
 
-- Kiểm tra hệ điều hành và tài nguyên VM (CPU, RAM, dung lượng ổ đĩa).
-- Kiểm tra phiên bản Node.js và npm bằng các lệnh `node --version` và `npm --version`.
-- Kiểm tra mã nguồn Frontend đã được clone hoặc triển khai đầy đủ.
-- Kiểm tra dependencies đã được cài đặt theo `package.json` và `package-lock.json`.
-- Thực hiện lệnh khởi chạy Frontend theo README và cấu hình nhóm đã thống nhất.
-- Kiểm tra khả năng truy cập giao diện từ trình duyệt.
-- Ghi nhận địa chỉ truy cập, phiên bản công cụ và kết quả kiểm tra.
+- Frontend build thành công bằng `npm --prefix frontend run build`.
+- Frontend kết nối API.
+- Hiển thị 4 phòng.
+- Kiểm tra lọc loại phòng.
+- Kiểm tra sắp xếp giá tăng dần và giảm dần.
+- Kiểm tra lọc sức chứa từ 3 người.
+- Xóa bộ lọc và khôi phục danh sách 4 phòng.
 
-#### 7.2. Kiểm tra VM Backend
+Ngày filter chưa được xác nhận hoàn chỉnh.
 
-- Kiểm tra hệ điều hành, Python và môi trường ảo.
-- Cài đặt dependencies theo `backend/requirements.txt`.
-- Kiểm tra cấu hình kết nối database và các biến môi trường cần thiết.
-- Kiểm tra sự tồn tại và khả năng sử dụng module kết nối database được Backend tham chiếu.
-- Kiểm tra khả năng khởi động FastAPI.
-- Đối chiếu các endpoint thực tế với `docs/api-contract.md`.
-- Ghi nhận kết quả khởi động, lỗi phát sinh và thông tin phiên bản.
+### 7.2. Backend
 
-Lưu ý: Mã nguồn Backend hiện tham chiếu `app.database.engine`, nhưng nhánh được kiểm tra chưa có file `backend/app/database.py`. Ngoài ra, hợp đồng API hiện mô tả một số endpoint ở trạng thái đề xuất, chưa xác nhận toàn bộ đã được triển khai. Cần thành viên phụ trách Backend xác nhận trước khi sử dụng làm căn cứ nghiệm thu.
+Các nội dung đã kiểm tra:
 
-#### 7.3. Kiểm tra VM Database
+- API Health trả HTTP 200.
+- API Rooms trả HTTP 200.
+- Kiểm thử 11/11 unittest thành công.
+- Kiểm tra dependencies bằng `pip check` không có lỗi.
 
-- Kiểm tra PostgreSQL đã được cài đặt và đang hoạt động.
-- Kiểm tra quyền truy cập database bằng tài khoản được cấp.
-- Xác nhận database phát triển đã được tạo theo tên và cấu hình nhóm thống nhất.
-- Kiểm tra cấu trúc bảng sau khi thực thi `database/schema.sql`.
-- Kiểm tra dữ liệu mẫu sau khi thực thi `database/seed.sql`.
-- Kiểm tra các migration, script rollback và script xác minh trong thư mục `database/migrations/`.
-- Ghi nhận phiên bản PostgreSQL, trạng thái database và kết quả kiểm tra.
+Các test bao gồm kiểm tra CORS, Health, Database failure, bộ lọc phòng, phân trang, dữ liệu rỗng và tính ổn định của kết quả.
 
-Lưu ý: Cần thống nhất thứ tự thực thi schema, seed và migration với thành viên phụ trách Database. Không tự ý chạy lại migration hoặc rollback trên môi trường có dữ liệu cần bảo toàn.
+### 7.3. Database
 
-### 8. Kiểm tra tích hợp ba tầng
+Các nội dung đã kiểm tra:
 
-Mục tiêu là xác nhận luồng hoạt động giữa Frontend, Backend và Database, đồng thời kiểm tra khả năng trao đổi dữ liệu và xử lý lỗi giữa các thành phần.
+- PostgreSQL hoạt động.
+- Hai bảng `room` và `room_type` tồn tại.
+- PostgreSQL lắng nghe tại `192.168.56.101:5432`.
+- Backend có thể kết nối TCP tới Database.
+- Backend khởi động và log xác nhận tìm thấy các bảng cần thiết.
 
-#### 8.1. Kiểm tra kết nối Backend – Database
+## 8. Cảnh báo và giới hạn môi trường
 
-- Xác nhận Backend đọc được cấu hình kết nối database.
-- Xác nhận Backend kết nối thành công với PostgreSQL.
-- Kiểm tra Backend có thể thực hiện truy vấn dữ liệu phòng từ database.
-- Đối chiếu dữ liệu trả về với dữ liệu đã được lưu trong PostgreSQL.
-- Kiểm tra và ghi nhận lỗi kết nối, lỗi truy vấn hoặc lỗi cấu hình nếu có.
+Trong quá trình kiểm tra các VM xuất hiện cảnh báo:
 
-#### 8.2. Kiểm tra kết nối Frontend – Backend
+```text
+watchdog: BUG: soft lockup - CPU#0 stuck for ...
+```
 
-Đối chiếu với hợp đồng API tại `docs/api-contract.md` và mã nguồn Backend thực tế.
+Cảnh báo này cần được theo dõi khi đánh giá độ ổn định và tài nguyên VM. Chưa có đủ dữ liệu để xác định nguyên nhân cụ thể hoặc kết luận mức độ ảnh hưởng.
 
-Các endpoint cần quan tâm trong tuần 1:
+Các giới hạn khác:
 
-- `POST /api/bookings`: endpoint tạo đặt phòng đã xuất hiện trong `backend/app/main.py`.
-- `GET /api/health`: endpoint kiểm tra trạng thái API, được đề xuất trong hợp đồng tích hợp.
-- `GET /api/rooms`: endpoint lấy danh sách phòng, được đề xuất trong hợp đồng tích hợp.
-
-Lưu ý: Việc endpoint xuất hiện trong tài liệu hoặc mã nguồn chưa đồng nghĩa với việc endpoint đã hoạt động thành công. Chỉ thực hiện kiểm thử sau khi Backend được xác nhận đã triển khai và khởi chạy.
-
-Khi kiểm thử, cần ghi nhận:
-- HTTP status code.
-- Nội dung response.
-- Kết quả xử lý trên giao diện.
-- Lỗi phát sinh (nếu có).
-- Công cụ và các bước thực hiện kiểm thử.
-
-#### 8.3. Kiểm tra luồng tích hợp hoàn chỉnh
-
-Luồng mục tiêu đối với chức năng hiển thị danh sách phòng:
-
-1. Frontend gửi yêu cầu lấy danh sách phòng đến Backend.
-2. Backend tiếp nhận và xử lý yêu cầu.
-3. Backend truy vấn dữ liệu phòng từ PostgreSQL.
-4. Backend trả kết quả cho Frontend theo cấu trúc response đã thống nhất.
-5. Frontend nhận dữ liệu và hiển thị danh sách phòng.
-
-Tiêu chí kiểm tra:
-
-- Frontend kết nối được với Backend.
-- Backend truy vấn được dữ liệu từ PostgreSQL.
-- Dữ liệu hiển thị trên giao diện khớp với dữ liệu trong database.
-- Hệ thống xử lý phù hợp khi Backend hoặc Database không khả dụng.
-- Frontend xử lý được trường hợp API trả về lỗi hoặc dữ liệu không hợp lệ.
-- Có bằng chứng kiểm thử như ảnh chụp giao diện, response Postman hoặc log chạy ứng dụng.
-
-**Trạng thái:** Các bước trên là kế hoạch kiểm tra tích hợp dự kiến. Chưa ghi nhận là đã kiểm thử thành công cho đến khi có kết quả thực tế và bằng chứng tương ứng.
+- Ba VM hiện chạy trên cùng máy Windows cá nhân.
+- Tài nguyên VM phụ thuộc vào máy chủ vật lý.
+- Khi máy chủ vật lý tắt hoặc mất kết nối, các VM có thể không truy cập được.
+- Host-only không tự động cho phép các thành viên khác truy cập từ máy riêng.
+- Chưa có xác nhận về lịch sử dụng và quyền truy cập VM chung.
 
 ## 9. Trạng thái chuẩn bị môi trường
 
-Bảng dưới đây tổng hợp trạng thái cài đặt công cụ trên máy phụ trách, tình trạng chuẩn bị mã nguồn và mức độ sẵn sàng của môi trường triển khai tại thời điểm cập nhật tài liệu.
-
 | Hạng mục | Trạng thái | Ghi chú |
-| :--- | :--- | :--- |
-| VS Code | Đã cài đặt | Trên máy phụ trách |
-| Git | Đã cài và kiểm tra phiên bản | Phiên bản 2.55.0.windows.5 |
-| Node.js / npm | Đã cài và kiểm tra phiên bản | Node.js v26.13.0, npm 11.20.0 |
-| Python | Đã cài và kiểm tra phiên bản | Python 3.13.15 |
-| PostgreSQL / psql | Đã cài và kiểm tra phiên bản | PostgreSQL / psql 18.6 |
-| pgAdmin 4 | Đã cài đặt | Trên máy phụ trách |
-| Postman | Đã cài đặt | Trên máy phụ trách |
-| Frontend React | Đang chờ | Chờ PR khởi tạo được merge để kiểm tra và chạy theo cấu hình nhóm |
-| Backend FastAPI | Chưa xác nhận | Repository đã có một số mã nguồn và dependencies; chưa xác nhận khởi chạy thành công |
-| Database HMS | Chưa xác nhận | Chưa xác nhận database phát triển đã được tạo, schema và seed đã thực thi thành công |
-| Thông tin VM1 | Chưa xác nhận | Chưa có thông tin và quyền truy cập |
-| Thông tin VM2 | Chưa xác nhận | Chưa có thông tin và quyền truy cập |
-| Thông tin VM3 | Chưa xác nhận | Chưa có thông tin và quyền truy cập |
-| Truy cập các VM | Chưa thực hiện | Chờ được cấp quyền |
-| Kiểm tra dịch vụ trên VM | Chưa thực hiện | Chờ môi trường sẵn sàng |
-| Tích hợp ba tầng | Chưa thực hiện | Chưa có kết quả kiểm thử thực tế |
-
-**Ghi chú:** Các phiên bản công cụ nêu trên được kiểm tra trên máy cá nhân của người phụ trách, không đại diện cho phiên bản đã cài đặt trên các VM. Các trạng thái triển khai và tích hợp sẽ được cập nhật khi có kết quả kiểm tra thực tế.
+|---|---|---|
+| Git | Đã kiểm tra | Máy Windows cá nhân |
+| Node.js / npm | Đã kiểm tra | Máy Windows cá nhân |
+| Python | Đã kiểm tra | Máy Windows cá nhân |
+| PostgreSQL / psql | Đã kiểm tra | Máy Windows cá nhân |
+| VS Code | Đã cài đặt | Máy phụ trách |
+| pgAdmin 4 | Đã cài đặt | Máy phụ trách |
+| Postman | Đã cài đặt | Máy phụ trách |
+| Oracle VirtualBox | Đã cài đặt | Đã tạo 3 VM thử nghiệm |
+| Frontend | Đã build và kiểm tra cơ bản | Build thành công, API hoạt động |
+| Backend | Đã chạy và kiểm thử | 11/11 unittest thành công |
+| Database | Đã kiểm tra cơ bản | PostgreSQL và bảng dữ liệu hoạt động |
+| VM1 – Frontend | Đã kiểm tra | IP `192.168.56.103` |
+| VM2 – Backend | Đã kiểm tra | IP `192.168.56.102` |
+| VM3 – Database | Đã kiểm tra | IP `192.168.56.101` |
+| Frontend → Backend | Đã kiểm tra | HTTP 200 |
+| Backend → Database | Đã kiểm tra | TCP succeeded; Backend log xác nhận kết nối |
+| VM chính thức của nhóm | Pending | Chờ nhóm thống nhất |
+| Quyền truy cập VM từ máy thành viên | Pending | Chưa kiểm tra |
+| Lịch sử dụng VM chung | Pending | Chờ nhóm thống nhất |
+| Quyền GitHub của tất cả thành viên | Pending | Chưa xác minh đầy đủ |
 
 ## 10. Kết luận
 
-Trong tuần 1, người phụ trách đã chuẩn bị các công cụ phát triển cơ bản trên máy cá nhân và kiểm tra phiên bản của Git, Node.js, npm, Python và PostgreSQL.
+Môi trường phát triển cá nhân của người phụ trách đã được chuẩn bị và kiểm tra các thành phần chính.
 
-Tài liệu đã tổng hợp các công nghệ chính của dự án, yêu cầu môi trường cho Frontend, Backend và Database, đồng thời đề xuất phương án phân chia ba VM và các yêu cầu kết nối để nhóm xem xét, thống nhất.
+Frontend đã build thành công và truy cập được API. Backend đã khởi chạy, trả kết quả cho các request thử nghiệm và có 11/11 unittest thành công. PostgreSQL hoạt động, có các bảng dữ liệu cần thiết và đã kiểm tra được kết nối mạng từ Backend.
 
-Tuy nhiên, kiến trúc triển khai chính thức, vai trò của từng VM, thông tin truy cập, cấu hình mạng và trạng thái triển khai các dịch vụ vẫn cần được nhóm xác nhận. Frontend đang chờ PR khởi tạo được merge; Backend và Database cũng chưa có đủ bằng chứng để xác nhận đã triển khai và hoạt động hoàn chỉnh.
+Ba VM trên Oracle VirtualBox cũng đã được tạo và kiểm tra kết nối cơ bản theo kiến trúc Frontend – Backend – Database.
 
-Tại thời điểm cập nhật tài liệu, trạng thái công việc được tổng hợp như sau:
+Tuy nhiên, ba VM hiện tại là môi trường thử nghiệm cá nhân của Thanh Thư, **chưa phải hạ tầng chính thức hoặc môi trường dùng chung được nhóm thống nhất**.
 
-- **Công cụ phát triển trên máy phụ trách:** Đã cài đặt và kiểm tra theo từng hạng mục nêu trên.
-- **Mã nguồn Frontend:** Đang chờ PR khởi tạo được merge để tiếp tục kiểm tra.
-- **Backend và Database:** Đã có một số file mã nguồn và cấu hình trong repository, nhưng chưa xác nhận hoạt động hoàn chỉnh.
-- **Thông tin và quyền truy cập VM:** Chưa xác nhận.
-- **Kiểm tra dịch vụ trên VM:** Chưa thực hiện.
-- **Kiểm tra tích hợp Frontend – Backend – Database:** Chưa thực hiện.
+Các nội dung cần tiếp tục xác nhận gồm:
 
-Không ghi nhận hệ thống đã triển khai hoặc tích hợp thành công khi chưa có kết quả kiểm tra thực tế.
+- Nhà cung cấp và cấu hình VM chính thức.
+- Vai trò và số lượng VM được nhóm lựa chọn.
+- Quyền truy cập của các thành viên.
+- Người quản lý và lịch sử dụng môi trường.
+- Quyền GitHub của các thành viên.
 
-Tài liệu sẽ tiếp tục được cập nhật khi nhóm thống nhất kiến trúc VM, cung cấp thông tin môi trường và hoàn thành các bước kiểm tra tương ứng.
+Tài liệu sẽ được cập nhật khi nhóm có quyết định chính thức về môi trường triển khai.
+
+**Kết luận trạng thái:** Đã chuẩn bị và kiểm tra môi trường thử nghiệm cá nhân; chưa xác nhận triển khai hạ tầng VM dùng chung của nhóm.
