@@ -1,4 +1,4 @@
-
+import { useEffect, useState } from 'react';
 import './DataTable.css';
 
 function DataTable({
@@ -6,61 +6,127 @@ function DataTable({
   data = [],
   loading = false,
   error = null,
+  pageSize = 5,
+  loadingText = 'Đang tải dữ liệu...',
+  emptyMessage = 'Không tìm thấy dữ liệu phù hợp với yêu cầu',
+  hasActiveFilters = false,
+  onClearFilters,
 }) {
-  // Trường hợp đang tải dữ liệu
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const safeData = Array.isArray(data) ? data : [];
+  const safePageSize = Math.max(1, pageSize);
+  const totalPages = Math.max(1, Math.ceil(safeData.length / safePageSize));
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [data, pageSize]);
+
+  const pageData = safeData.slice(
+    (currentPage - 1) * safePageSize,
+    currentPage * safePageSize
+  );
+
   if (loading) {
     return (
-      <div className="data-table-message">
-        Đang tải dữ liệu...
+      <div className="data-table-message" role="status">
+        {loadingText}
       </div>
     );
   }
 
-  // Trường hợp xảy ra lỗi
   if (error) {
     return (
-      <div className="data-table-message data-table-error">
-        {error}
+      <div className="data-table-message data-table-error" role="alert">
+        <strong>Có lỗi xảy ra</strong>
+        <p>{error}</p>
       </div>
     );
   }
 
-  // Trường hợp không có dữ liệu
-  if (data.length === 0) {
+  if (safeData.length === 0) {
     return (
       <div className="data-table-message">
-        Không có dữ liệu
+        <p>{emptyMessage}</p>
+
+        {hasActiveFilters && onClearFilters && (
+          <button
+            type="button"
+            className="data-table-clear"
+            onClick={onClearFilters}
+          >
+            Xóa bộ lọc
+          </button>
+        )}
       </div>
     );
   }
 
   return (
-    <div className="data-table-wrapper">
-      <table className="data-table">
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th key={column.key}>
-                {column.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.map((row, index) => (
-            <tr key={row.id ?? index}>
+    <div>
+      <div className="data-table-wrapper">
+        <table className="data-table">
+          <thead>
+            <tr>
               {columns.map((column) => (
-                <td key={column.key}>
-                  {column.render
-                    ? column.render(row[column.key], row)
-                    : row[column.key] ?? '—'}
-                </td>
+                <th key={column.key}>
+                  {column.label}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {pageData.map((row, index) => (
+              <tr key={row.id ?? row.room_id ?? row.booking_id ?? index}>
+                {columns.map((column) => {
+                  const value = row[column.key];
+
+                  const isNumber =
+                    column.align === 'right' ||
+                    (column.align !== 'left' &&
+                      typeof value === 'number');
+
+                  return (
+                    <td
+                      key={column.key}
+                      className={isNumber ? 'data-table__number' : ''}
+                    >
+                      {column.render
+                        ? column.render(value, row)
+                        : value ?? '—'}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {safeData.length > safePageSize && (
+        <div className="data-table-pagination">
+          <button
+            type="button"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((page) => page - 1)}
+          >
+            Trang trước
+          </button>
+
+          <span>
+            Trang {currentPage} / {totalPages}
+          </span>
+
+          <button
+            type="button"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((page) => page + 1)}
+          >
+            Trang sau
+          </button>
+        </div>
+      )}
     </div>
   );
 }

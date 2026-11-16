@@ -1,4 +1,3 @@
-
 import './StatusBadge.css';
 
 const statusConfig = {
@@ -24,7 +23,7 @@ const statusConfig = {
   },
   CLEANING: {
     label: 'Đang dọn',
-    type: 'info',
+    type: 'warning',
   },
   AVAILABLE: {
     label: 'Có thể sử dụng',

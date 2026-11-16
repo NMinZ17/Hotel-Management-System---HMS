@@ -1,4 +1,3 @@
-
 import './FilterBar.css';
 
 function FilterBar({

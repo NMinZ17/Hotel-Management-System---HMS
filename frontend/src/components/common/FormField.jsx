@@ -1,4 +1,3 @@
-
 import './FormField.css';
 
 function FormField({
@@ -11,8 +10,25 @@ function FormField({
   placeholder = '',
   required = false,
   error = '',
+  as = 'input',
+  options = [],
+  disabled = false,
 }) {
   const fieldId = id || name;
+
+  const commonProps = {
+    id: fieldId,
+    name,
+    value,
+    onChange: (event) => onChange?.(event.target.value),
+    required,
+    disabled,
+    'aria-invalid': Boolean(error),
+    'aria-describedby': error ? `${fieldId}-error` : undefined,
+    className: `form-field__input ${
+      error ? 'form-field__input--error' : ''
+    }`,
+  };
 
   return (
     <div className="form-field">
@@ -21,19 +37,34 @@ function FormField({
         {required && <span className="form-field__required"> *</span>}
       </label>
 
-      <input
-        id={fieldId}
-        name={name}
-        type={type}
-        value={value}
-        onChange={(event) => onChange?.(event.target.value)}
-        placeholder={placeholder}
-        required={required}
-        aria-invalid={Boolean(error)}
-        className={`form-field__input ${error ? 'form-field__input--error' : ''}`}
-      />
+      {as === 'select' ? (
+        <select {...commonProps}>
+          <option value="">
+            {placeholder || 'Vui lòng chọn'}
+          </option>
 
-      {error && <p className="form-field__error">{error}</p>}
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          {...commonProps}
+          type={type}
+          placeholder={placeholder}
+        />
+      )}
+
+      {error && (
+        <p
+          id={`${fieldId}-error`}
+          className="form-field__error"
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }

@@ -1,13 +1,12 @@
-
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background-color: #ffffff;
+  border: 1px solid #e5ded3;
+  border-radius: 6px;
+  background: #fffdf9;
 }
 
 .filter-bar__fields {
@@ -26,38 +25,42 @@
 }
 
 .filter-bar__label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5c4432;
 }
 
 .filter-bar__control {
   width: 100%;
-  min-height: 38px;
-  padding: 8px 10px;
-  border: 1px solid #cbd5e1;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #c9bba9;
   border-radius: 6px;
+  background: #fffdf9;
+  color: #44403c;
   font-size: 14px;
   box-sizing: border-box;
 }
 
 .filter-bar__control:focus {
-  outline: 2px solid #93c5fd;
-  border-color: #2563eb;
+  outline: 2px solid #d6c2a8;
+  border-color: #8b6b4a;
 }
 
 .filter-bar__reset {
-  min-height: 38px;
-  padding: 8px 14px;
-  border: 1px solid #cbd5e1;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid #8b6b4a;
   border-radius: 6px;
-  background-color: #f8fafc;
-  color: #334155;
+  background: #f3eee6;
+  color: #6f4e37;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
 }
 
 .filter-bar__reset:hover {
-  background-color: #e2e8f0;
+  background: #e8dccb;
 }
 
 @media (max-width: 600px) {
@@ -66,6 +69,10 @@
   }
 
   .filter-bar__field {
+    width: 100%;
+  }
+
+  .filter-bar__reset {
     width: 100%;
   }
 }

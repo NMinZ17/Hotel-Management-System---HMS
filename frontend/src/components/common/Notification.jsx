@@ -1,11 +1,23 @@
-
+import { useEffect } from 'react';
 import './Notification.css';
 
 function Notification({
   type = 'info',
   message = '',
   onClose,
+  duration = 2500,
+  autoClose = true,
 }) {
+  useEffect(() => {
+    if (!message || !autoClose || !onClose) return;
+
+    const timer = setTimeout(() => {
+      onClose();
+    }, duration);
+
+    return () => clearTimeout(timer);
+  }, [message, autoClose, onClose, duration]);
+
   if (!message) return null;
 
   const icons = {
@@ -15,13 +27,15 @@ function Notification({
     info: 'ℹ',
   };
 
+  const safeType = icons[type] ? type : 'info';
+
   return (
     <div
-      className={`notification notification--${type}`}
-      role="alert"
+      className={`notification notification--${safeType}`}
+      role={safeType === 'error' ? 'alert' : 'status'}
     >
       <span className="notification__icon">
-        {icons[type] || icons.info}
+        {icons[safeType]}
       </span>
 
       <span className="notification__message">
