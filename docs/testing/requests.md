@@ -1,4 +1,4 @@
-# API Request Testing – HMS
+﻿# API Request Testing – HMS
 
 **Mã công việc:** HMS-W1-THU  
 **Issue:** #5 – Thiết kế layout chung, request thử và kiểm tra VM  
@@ -268,3 +268,314 @@ Các nội dung đã thực hiện và có kết quả ghi nhận:
 - Kiểm tra bộ lọc ngày: Chưa xác nhận hoàn chỉnh.
 
 Kết luận này chỉ áp dụng cho phạm vi Week 1 đã thực hiện, không đại diện cho việc toàn bộ hệ thống HMS đã hoàn thành kiểm thử.
+
+# WEEK 2 – REQUEST KIỂM THỬ NGHIỆP VỤ
+
+**Mã công việc:** HMS-W2-THU  
+**Issue:** #9 – Quản trị phòng, khung staff và request nghiệp vụ  
+**Người phụ trách:** Đỗ Thị Thanh Thư  
+**Reviewer:** maingoclinh1681  
+**Thời gian:** 16/11/2026 – 22/11/2026  
+**Trạng thái:** In progress – Một số request chờ Backend công bố endpoint.
+
+## 11. Mục đích kiểm thử Week 2
+
+Bổ sung bộ request phục vụ kiểm tra tích hợp các nghiệp vụ:
+
+- Đăng ký và đăng nhập.
+- Tìm kiếm phòng.
+- Đặt phòng và kiểm tra ngày không hợp lệ.
+- Xem và hủy đặt phòng.
+- Kiểm tra truy cập đơn đặt phòng không thuộc tài khoản hiện tại.
+- Kiểm tra phân quyền giữa Guest, Staff và Admin.
+
+Phần kiểm thử được thực hiện theo API contract do thành viên phụ trách Backend công bố. Không tự tạo hoặc sửa endpoint thuộc phạm vi Backend của thành viên khác.
+
+## 12. Môi trường và biến kiểm thử
+
+| Thành phần | Giá trị |
+|---|---|
+| Backend URL | `http://localhost:8000` |
+| Công cụ | PowerShell Invoke-RestMethod |
+| API hiện có đã xác nhận | `GET /api/health`, `GET /api/rooms` |
+| API nghiệp vụ | Chờ Backend công bố |
+| Dữ liệu tài khoản | Tài khoản kiểm thử riêng |
+| Token | Lấy từ response đăng nhập sau khi API được công bố |
+
+Khai báo biến môi trường:
+
+```powershell
+$BaseUrl = "http://localhost:8000"
+
+$GuestToken = $env:HMS_GUEST_TOKEN
+$OtherGuestToken = $env:HMS_OTHER_GUEST_TOKEN
+$StaffToken = $env:HMS_STAFF_TOKEN
+$AdminToken = $env:HMS_ADMIN_TOKEN
+```
+
+Không ghi mật khẩu hoặc token thật vào file tài liệu, Git hay ảnh chụp màn hình.
+
+## 13. Danh sách request kiểm thử
+
+### W2-REQ-01 – Lấy danh sách phòng
+
+- **Method:** GET
+- **Endpoint:** `/api/rooms`
+- **Trạng thái:** Đã có endpoint.
+- **Mục đích:** Kiểm tra danh sách phòng và dữ liệu loại phòng.
+- **Query parameters đã xác nhận:**
+  - `room_type_id`
+  - `limit`
+  - `offset`
+
+```powershell
+Invoke-RestMethod -Method Get -Uri "$BaseUrl/api/rooms"
+```
+
+**Kiểm tra:**
+- API trả về danh sách phòng.
+- Dữ liệu phân trang hoạt động đúng.
+- Lọc theo loại phòng hoạt động đúng.
+- Xác minh các trường được phép công khai theo API contract.
+- Không mặc định coi `housekeeping_status` hoặc `maintenance_status` là dữ liệu công khai khi chưa có xác nhận.
+
+### W2-REQ-02 – Đăng ký tài khoản
+
+- **Method:** POST
+- **Endpoint dự kiến:** `/api/auth/register`
+- **Trạng thái:** BLOCKED – Chờ Backend xác nhận endpoint và request schema.
+- **Mục đích:** Kiểm tra đăng ký tài khoản mới.
+
+**Dữ liệu cần chuẩn bị:**
+- Email chưa được sử dụng.
+- Mật khẩu kiểm thử.
+- Thông tin người dùng theo schema Backend công bố.
+
+**Kết quả mong đợi:**
+- Đăng ký thành công khi dữ liệu hợp lệ.
+- Có thông báo phù hợp khi email đã tồn tại hoặc dữ liệu không hợp lệ.
+- Không trả về mật khẩu dạng văn bản thuần.
+
+### W2-REQ-03 – Đăng nhập thành công
+
+- **Method:** POST
+- **Endpoint dự kiến:** `/api/auth/login`
+- **Trạng thái:** BLOCKED – Chờ Backend xác nhận endpoint và request schema.
+- **Mục đích:** Kiểm tra đăng nhập và nhận token.
+
+**Dữ liệu cần chuẩn bị:**
+- Tài khoản Guest kiểm thử.
+- Mật khẩu tương ứng.
+
+**Kết quả mong đợi:**
+- Đăng nhập thành công với tài khoản hợp lệ.
+- Response có thông tin xác thực theo API contract.
+- Lưu token vào biến môi trường để sử dụng ở các request tiếp theo.
+
+### W2-REQ-04 – Đăng nhập thất bại
+
+- **Method:** POST
+- **Endpoint dự kiến:** `/api/auth/login`
+- **Trạng thái:** BLOCKED – Chờ Backend công bố.
+- **Mục đích:** Kiểm tra tài khoản hoặc mật khẩu không hợp lệ.
+
+**Các trường hợp:**
+- Email không tồn tại.
+- Mật khẩu không đúng.
+- Thiếu trường bắt buộc.
+- Dữ liệu đầu vào sai định dạng.
+
+**Kết quả mong đợi:**
+- Request bị từ chối phù hợp.
+- HTTP status và response body được ghi lại theo kết quả thực tế.
+- Không để lộ thông tin nhạy cảm của tài khoản.
+
+### W2-REQ-05 – Tìm kiếm phòng theo ngày
+
+- **Method:** Chờ API contract.
+- **Endpoint:** Chưa được xác nhận.
+- **Trạng thái:** BLOCKED – Chờ Backend công bố.
+- **Mục đích:** Kiểm tra khả năng tìm phòng theo khoảng thời gian lưu trú.
+
+**Dữ liệu cần kiểm tra:**
+- Ngày nhận phòng.
+- Ngày trả phòng.
+- Số lượng khách.
+- Loại phòng nếu API hỗ trợ.
+
+**Kết quả mong đợi:**
+- Trả về phòng phù hợp với điều kiện tìm kiếm.
+- Không trả về phòng không khả dụng trong khoảng ngày được yêu cầu.
+- Kết quả phải dựa trên trạng thái đặt phòng thực tế.
+
+### W2-REQ-06 – Đặt phòng
+
+- **Method:** Chờ API contract.
+- **Endpoint:** Chưa được xác nhận.
+- **Trạng thái:** BLOCKED – Chờ Backend công bố.
+- **Mục đích:** Kiểm tra tạo đơn đặt phòng.
+
+**Dữ liệu cần chuẩn bị:**
+- Guest đã đăng nhập.
+- Phòng cần đặt.
+- Ngày nhận phòng.
+- Ngày trả phòng.
+- Số lượng khách.
+
+**Kết quả mong đợi:**
+- Tạo đơn đặt phòng thành công khi dữ liệu hợp lệ.
+- Không cho phép đặt phòng không khả dụng.
+- Kiểm tra dữ liệu đơn đặt phòng sau khi tạo.
+- Không tự giả định cấu trúc request hoặc response khi Backend chưa công bố.
+
+### W2-REQ-07 – Kiểm tra ngày không hợp lệ
+
+- **Method:** Chờ API tìm kiếm hoặc đặt phòng được công bố.
+- **Endpoint:** Chưa được xác nhận.
+- **Trạng thái:** BLOCKED – Chờ Backend công bố.
+- **Mục đích:** Kiểm tra xử lý dữ liệu ngày.
+
+| Mã | Dữ liệu kiểm thử | Kết quả mong đợi |
+|---|---|---|
+| DATE-01 | Ngày nhận phòng sau ngày trả phòng | Từ chối dữ liệu |
+| DATE-02 | Ngày nhận phòng bằng ngày trả phòng | Xử lý theo quy tắc API contract |
+| DATE-03 | Ngày nhận phòng trong quá khứ | Từ chối nếu nghiệp vụ không cho phép |
+| DATE-04 | Thiếu ngày nhận phòng | Báo lỗi dữ liệu bắt buộc |
+| DATE-05 | Sai định dạng ngày | Báo lỗi định dạng |
+
+HTTP status thực tế sẽ được ghi lại sau khi Backend có endpoint.
+
+### W2-REQ-08 – Xem danh sách đặt phòng của tài khoản
+
+- **Method:** Chờ API contract.
+- **Endpoint:** Chưa được xác nhận.
+- **Trạng thái:** BLOCKED – Chờ Backend công bố.
+- **Mục đích:** Kiểm tra tài khoản Guest xem được đơn đặt phòng của chính mình.
+
+**Kết quả mong đợi:**
+- Guest xem được các đơn thuộc tài khoản hiện tại.
+- Không hiển thị đơn đặt phòng của Guest khác.
+- Dữ liệu trả về phù hợp với quyền của người dùng.
+
+### W2-REQ-09 – Truy cập đơn đặt phòng sai chủ sở hữu
+
+- **Method:** Chờ API contract.
+- **Endpoint:** Chưa được xác nhận.
+- **Trạng thái:** BLOCKED – Chờ Backend công bố.
+- **Mục đích:** Kiểm tra quyền truy cập tài nguyên.
+
+**Chuẩn bị:**
+- Guest A có một đơn đặt phòng.
+- Guest B có token riêng.
+- Lấy mã đơn đặt phòng thuộc Guest A.
+
+**Thao tác kiểm thử:**
+- Đăng nhập bằng Guest B.
+- Gửi request truy cập đơn đặt phòng của Guest A.
+
+**Kết quả mong đợi:**
+- Guest B không được xem hoặc thao tác trên đơn của Guest A.
+- Backend phải kiểm tra quyền sở hữu tài nguyên.
+- Không coi việc ẩn nút trên Frontend là cơ chế bảo mật.
+
+### W2-REQ-10 – Hủy đặt phòng
+
+- **Method:** Chờ API contract.
+- **Endpoint:** Chưa được xác nhận.
+- **Trạng thái:** BLOCKED – Chờ Backend công bố.
+- **Mục đích:** Kiểm tra nghiệp vụ hủy đặt phòng.
+
+**Kết quả mong đợi:**
+- Người dùng có quyền được hủy đơn theo quy tắc nghiệp vụ.
+- Không cho phép Guest hủy đơn của Guest khác.
+- Không cho phép hủy đơn không tồn tại.
+- Kiểm tra trạng thái đơn sau khi hủy.
+- Ghi nhận HTTP status và response thực tế.
+
+### W2-REQ-11 – Kiểm tra phân quyền Guest, Staff và Admin
+
+- **Method:** Chờ API contract.
+- **Endpoint:** Các endpoint cần kiểm tra theo từng nhóm quyền.
+- **Trạng thái:** BLOCKED – Chờ Backend công bố.
+- **Mục đích:** Kiểm tra quyền truy cập theo vai trò.
+
+| Vai trò | Nội dung cần kiểm tra |
+|---|---|
+| Guest | Truy cập chức năng dành cho khách |
+| Staff | Truy cập chức năng nghiệp vụ được cấp quyền |
+| Admin | Truy cập chức năng quản trị được cấp quyền |
+
+**Kết quả mong đợi:**
+- Người dùng chỉ truy cập được chức năng phù hợp với quyền được cấp.
+- Backend thực hiện xác thực và phân quyền.
+- Request không có token hoặc token không hợp lệ phải bị từ chối.
+- Không dựa riêng vào việc ẩn nút hoặc ẩn trang trên Frontend để kết luận an toàn.
+
+## 14. Bảng ghi nhận kết quả chạy request
+
+Chỉ điền HTTP status, response và kết quả sau khi request thực sự được chạy.
+
+| Mã request | Ngày chạy | Endpoint | HTTP status | Kết quả thực tế | Minh chứng | Issue liên quan |
+|---|---|---|---|---|---|---|
+| W2-REQ-01 | 21/11/2026 | GET /api/rooms | HTTP 200; tham số sai HTTP 422 | VERIFIED – Danh sách, phân trang và lọc đạt | Log PowerShell | - |
+| W2-REQ-02 | Chờ cập nhật | POST /api/auth/register | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-03 | Chờ cập nhật | POST /api/auth/login | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-04 | Chờ cập nhật | POST /api/auth/login | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-05 | Chờ cập nhật | Chưa xác nhận | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-06 | Chờ cập nhật | Chưa xác nhận | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-07 | Chờ cập nhật | Chưa xác nhận | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-08 | Chờ cập nhật | Chưa xác nhận | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-09 | Chờ cập nhật | Chưa xác nhận | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-10 | Chờ cập nhật | Chưa xác nhận | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+| W2-REQ-11 | Chờ cập nhật | Chưa xác nhận | BLOCKED | Chờ Backend | - | Chờ xác nhận |
+
+## 15. Quy tắc ghi nhận lỗi tích hợp
+
+Khi phát hiện lỗi, ghi đầy đủ:
+
+1. Mã request.
+2. Ngày và môi trường chạy.
+3. Endpoint và HTTP method.
+4. Dữ liệu đầu vào đã loại bỏ thông tin nhạy cảm.
+5. HTTP status thực tế.
+6. Response thực tế.
+7. Kết quả mong đợi.
+8. Kết quả thực tế.
+9. Ảnh chụp màn hình hoặc log.
+10. Issue liên quan và người phụ trách.
+
+Không ghi nhận lỗi giả định như lỗi đã tái hiện. Các trường hợp đang chờ Backend phải được đánh dấu BLOCKED.
+
+## 16. Tổng kết Week 2
+
+- Đã bổ sung danh sách request kiểm thử nghiệp vụ cần thiết.
+- Đã xác định API hiện có: `GET /api/health` và `GET /api/rooms`.
+- Các request đăng nhập, đặt phòng, hủy phòng và kiểm tra quyền cần chờ Backend công bố endpoint, schema và cơ chế xác thực.
+- Chưa ghi HTTP status hoặc response giả định cho các API chưa có.
+- Tiếp tục cập nhật kết quả chạy thực tế và minh chứng sau khi tích hợp Backend.
+
+**Phạm vi phụ trách:** Thanh Thư thực hiện phần giao diện Admin/Staff, tích hợp theo API contract đã công bố và chuẩn bị request kiểm thử. Không tự ý thay đổi endpoint hoặc logic Backend thuộc thành viên khác.
+
+## 17. Kết quả thực tế W2-REQ-01
+
+**Ngày kiểm thử:** 21/11/2026  
+**Môi trường:** Windows local – FastAPI tại http://localhost:8000
+
+| STT | Nội dung kiểm thử | Kết quả thực tế | Đánh giá |
+|---|---|---|---|
+| 1 | GET /api/health | HTTP 200, status ok | Passed |
+| 2 | GET /api/rooms | HTTP 200, nhận 4 phòng | Passed |
+| 3 | limit=2&offset=0 | HTTP 200, nhận 2 phòng | Passed |
+| 4 | oom_type_id=1 | HTTP 200, nhận phòng 101 và 102 | Passed |
+| 5 | limit=0 | HTTP 422 | Passed |
+| 6 | limit=201 | HTTP 422 | Passed |
+| 7 | offset=-1 | HTTP 422 | Passed |
+| 8 | oom_type_id=0 | HTTP 422 | Passed |
+
+**Kết luận:** Các trường hợp đã kiểm tra đều cho kết quả đúng với giới hạn và hành vi được khai báo trong API.
+
+**Minh chứng:** Log PowerShell. Không yêu cầu ảnh chụp màn hình trong phạm vi công việc này.
+
+**Trạng thái W2-REQ-01:** VERIFIED.
+
+Lưu ý: housekeeping_status và maintenance_status vẫn chờ xác nhận phạm vi dữ liệu được phép công khai.
