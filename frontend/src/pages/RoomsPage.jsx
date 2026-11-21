@@ -120,6 +120,7 @@ export default function RoomsPage() {
     );
   };
 
+  const today = new Date().toISOString().split('T')[0];
   return (
     <div>
       {/* HEADER TRANG CHỦ */}
@@ -159,8 +160,15 @@ export default function RoomsPage() {
               <span>Ngày đặt:</span>
               <input
                 type="date"
+                min={today}
                 value={checkIn}
-                onChange={(e) => setCheckIn(e.target.value)}
+                onChange={(e) => {
+                  const newCheckIn = e.target.value;
+                  setCheckIn(newCheckIn);
+                  if (checkOut && checkOut <= newCheckIn) {
+                    setCheckOut('');
+                  }
+                }}
               />
             </div>
 
@@ -168,6 +176,7 @@ export default function RoomsPage() {
               <span>Ngày trả:</span>
               <input
                 type="date"
+                min={checkIn || today}
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
               />
