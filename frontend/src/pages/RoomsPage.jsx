@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { roomApi } from '../lib/api';
-
+import FilterBar from '../components/common/FilterBar';
 const ROOM_IMAGES = [
   'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80',
   'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
@@ -25,6 +25,24 @@ export default function RoomsPage() {
   const [appliedFilter, setAppliedFilter] = useState({ capacity: 0 });
   const [sortBy, setSortBy] = useState('default');
   const [selectedRoomType, setSelectedRoomType] = useState('ALL');
+  const filterConfig = [
+    {
+      key: 'checkIn',
+      label: 'Ngày đặt',
+      type: 'date',
+    },
+    {
+      key: 'checkOut',
+      label: 'Ngày trả',
+      type: 'date',
+    },
+    {
+      key: 'capacityInput',
+      label: 'Sức chứa',
+      type: 'number',
+      placeholder: 'Số người',
+    },
+  ];
 
   // Phân trang & Modal
   const [currentPage, setCurrentPage] = useState(1);
@@ -104,7 +122,19 @@ export default function RoomsPage() {
     setAppliedFilter({ capacity: Number(capacityInput) || 0 });
     setCurrentPage(1);
   };
+  const handleFilterChange = (key, value) => {
+    if (key === 'checkIn') setCheckIn(value);
+    if (key === 'checkOut') setCheckOut(value);
+    if (key === 'capacityInput') setCapacityInput(value);
+  };
 
+  const handleResetFilters = () => {
+    setCheckIn('');
+    setCheckOut('');
+    setCapacityInput('');
+    setAppliedFilter({ capacity: 0 });
+    setCurrentPage(1);
+  };
   const handleToggleLike = (roomId) => {
     setLikedIds((prev) =>
       prev.includes(roomId) ? prev.filter((id) => id !== roomId) : [...prev, roomId]
@@ -154,80 +184,59 @@ export default function RoomsPage() {
       {/* NỘI DUNG CHÍNH */}
       <main className="main-container">
         {/* THANH TÌM KIẾM & BỘ LỌC */}
-        <section className="filter-toolbar">
-          <div className="filter-left-group">
-            <div className="filter-box">
-              <span>Ngày đặt:</span>
-              <input
-                type="date"
-                min={today}
-                value={checkIn}
-                onChange={(e) => {
-                  const newCheckIn = e.target.value;
-                  setCheckIn(newCheckIn);
-                  if (checkOut && checkOut <= newCheckIn) {
-                    setCheckOut('');
-                  }
-                }}
-              />
-            </div>
+       <section className="filter-toolbar">
+        <div className="filter-left-group">
+          <FilterBar
+            filters={filterConfig}
+            values={{
+              checkIn,
+              checkOut,
+              capacityInput,
+            }}
+            onChange={handleFilterChange}
+            onReset={handleResetFilters}
+          />
 
-            <div className="filter-box">
-              <span>Ngày trả:</span>
-              <input
-                type="date"
-                min={checkIn || today}
-                value={checkOut}
-                onChange={(e) => setCheckOut(e.target.value)}
-              />
-            </div>
+          <button
+            type="button"
+            className="btn-search"
+            onClick={handleApplySearch}
+          >
+            Tìm
+          </button>
+        </div>
 
-            <div className="filter-box">
-              <span>Sức chứa:</span>
-              <input
-                type="number"
-                min={1}
-                max={10}
-                placeholder="Số người"
-                style={{ width: 85 }}
-                value={capacityInput}
-                onChange={(e) => setCapacityInput(e.target.value)}
-              />
-            </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <select
+            className="sort-select"
+            value={selectedRoomType}
+            onChange={(e) => {
+              setSelectedRoomType(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <option value="ALL">Loại phòng: Tất cả</option>
+            {roomTypes.map(([id, name]) => (
+              <option key={id} value={id}>
+                {name}
+              </option>
+            ))}
+          </select>
 
-            <button type="button" className="btn-search" onClick={handleApplySearch}>
-              Tìm
-            </button>
-          </div>
-
-          <div style={{ display: 'flex', gap: 10 }}>
-            <select
-              className="sort-select"
-              value={selectedRoomType}
-              onChange={(e) => {
-                setSelectedRoomType(e.target.value);
-                setCurrentPage(1);
-              }}
-            >
-              <option value="ALL">Loại phòng: Tất cả</option>
-              {roomTypes.map(([id, name]) => (
-                <option key={id} value={id}>
-                  {name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="sort-select"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="default">Bộ lọc/sắp xếp</option>
-              <option value="price_asc">Giá: Thấp → Cao</option>
-              <option value="price_desc">Giá: Cao → Thấp</option>
-            </select>
-          </div>
-        </section>
+          <select
+            className="sort-select"
+            value={sortBy}
+            onChange={(e) => {
+              setSortBy(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <option value="default">Bộ lọc/sắp xếp</option>
+            <option value="price_asc">Giá: Thấp → Cao</option>
+            <option value="price_desc">Giá: Cao → Thấp</option>
+          </select>
+        </div>
+      </section>
 
         {/* TRẠNG THÁI LOADING / LỖI / LƯỚI PHÒNG */}
         {loading && <p>Đang tải danh sách phòng...</p>}

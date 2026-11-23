@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { loginSuccess, logout } = useAuth();
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -71,10 +73,10 @@ export default function LoginPage() {
         const { access_token, token, user } = res.data;
         const authToken = access_token || token;
 
-        if (authToken) localStorage.setItem('token', authToken);
         const userInfo = user || { email: formData.email.trim() };
-        localStorage.setItem('user', JSON.stringify(userInfo));
+        loginSuccess(userInfo, authToken);
         setCurrentUser(userInfo);
+        
 
         setSuccessMsg('Đăng nhập thành công. Đang chuyển hướng...');
         setTimeout(() => navigate('/booking'), 800);
@@ -97,8 +99,7 @@ export default function LoginPage() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    logout();
     setCurrentUser(null);
     setSuccessMsg('Đã đăng xuất khỏi hệ thống.');
     setErrorMsg('');
