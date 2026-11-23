@@ -15,10 +15,29 @@ export default function MainLayout() {
       {/* Header / Navbar */}
       <header style={{ backgroundColor: '#1e293b', color: 'white', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <Link to="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', fontSize: '18px' }}>
+          <Link
+            to="/"
+            style={{
+              color: 'white',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+              fontSize: '18px',
+            }}
+          >
             🏨 HMS Demo Hotel
           </Link>
-          <Link to="/rooms" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Tìm phòng</Link>
+
+          <Link to="/rooms" style={{ color: '#cbd5e1', textDecoration: 'none' }}>
+            Tìm phòng
+          </Link>
+
+          <Link to="/booking" style={{ color: '#cbd5e1', textDecoration: 'none' }}>
+            Đặt phòng
+          </Link>
+
+          <Link to="/my-reservations" style={{ color: '#cbd5e1', textDecoration: 'none' }}>
+            Lịch sử đặt phòng
+          </Link>
         </div>
 
         <div>
