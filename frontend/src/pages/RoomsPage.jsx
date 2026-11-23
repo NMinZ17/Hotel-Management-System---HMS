@@ -150,6 +150,7 @@ export default function RoomsPage() {
     );
   };
 
+  const today = new Date().toISOString().split('T')[0];
   return (
     <div>
       {/* HEADER TRANG CHỦ */}
