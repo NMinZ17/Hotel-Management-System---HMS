@@ -13,6 +13,9 @@ class Settings:
         "http://127.0.0.1:5173",
     )
 
+    auth_secret: str = ""
+    token_ttl_seconds: int = 8 * 3600
+
     @classmethod
     def from_environment(cls) -> "Settings":
         # Existing environment variables take precedence over backend/.env.
@@ -20,6 +23,8 @@ class Settings:
         origins = os.getenv("CORS_ORIGINS")
         return cls(
             database_url=os.getenv("DATABASE_URL", "").strip(),
+            auth_secret=os.getenv("AUTH_SECRET", "").strip(),
+            token_ttl_seconds=int(os.getenv("TOKEN_TTL_SECONDS", "28800")),
             cors_origins=(
                 tuple(origin.strip() for origin in origins.split(",") if origin.strip())
                 if origins is not None

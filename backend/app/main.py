@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from app.config import Settings
+from app.routers.auth import router as auth_router
+from app.routers.reservations import router as reservations_router
 from app.routers.rooms import router as rooms_router
 
 
@@ -18,7 +20,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         CORSMiddleware,
         allow_origins=list(settings.cors_origins),
         allow_credentials=False,
-        allow_methods=["GET"],
+        allow_methods=["GET", "POST"],
         allow_headers=["Content-Type", "Authorization"],
     )
 
@@ -32,6 +34,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok", "service": "hms-api"}
 
     application.include_router(rooms_router)
+    application.include_router(auth_router)
+    application.include_router(reservations_router)
     return application
 
 

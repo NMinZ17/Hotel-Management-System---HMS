@@ -82,16 +82,33 @@ Không trả chuỗi kết nối, mật khẩu hoặc lỗi nội bộ PostgreSQ
 
 Hướng dẫn chạy và request kiểm tra: [backend tuần 1](backend-week1.md).
 
-## Endpoint dự kiến cho tuần sau
+## Tuần 2: xác thực, tìm phòng và đặt / hủy
 
-Các route dưới đây vẫn là kế hoạch, chưa được triển khai trong bản backend tuần 1.
+Cần `AUTH_SECRET` trong `backend/.env` (xem `.env.example`). Lỗi nghiệp vụ luôn có dạng `{"detail": {"code": "...", "message": "..."}}`. Mọi route ghi dữ liệu chạy trong một transaction; lỗi DB trả `503 DATABASE_UNAVAILABLE`, không bao giờ trả 2xx.
+
+Token: gửi header `Authorization: Bearer <access_token>`. Vai trò theo seed: `ADMIN`, `RECEPTION` (nhân viên), `GUEST`. Mật khẩu băm scrypt; tài khoản seed dùng `demo_hash` không đăng nhập được cho tới khi đặt lại mật khẩu thật.
+
+| Endpoint | Quyền | Kết quả |
+| --- | --- | --- |
+| `POST /api/auth/register` `{email, password≥8, full_name, phone?}` | Công khai | 201 `UserOut`; 409 `EMAIL_TAKEN`; 422 |
+| `POST /api/auth/login` `{email, password}` | Công khai | 200 `{access_token, token_type, expires_in, user}`; 401 sai thông tin; 503 `AUTH_NOT_CONFIGURED` |
+| `GET /api/auth/me` | Đã đăng nhập | 200 `UserOut`; 401 |
+| `GET /api/availability?check_in&check_out&guests=1&room_type_id?` | Công khai | 200 mảng `{room_type, available_rooms, nights, nightly_price, total_price}`; 422 `INVALID_DATES` |
+| `POST /api/reservations` `{room_type_id, check_in, check_out, adults, children=0, note?}` | GUEST | 201 `ReservationOut`; 404 `ROOM_TYPE_NOT_FOUND`; 409 `NO_ROOM_AVAILABLE`; 422 `INVALID_DATES`/`INVALID_GUESTS`; 403 tài khoản nhân viên |
+| `GET /api/reservations/mine` | GUEST | 200 mảng `ReservationOut` |
+| `GET /api/reservations/{id}` | Chủ đơn hoặc nhân viên | 200; 404 `RESERVATION_NOT_FOUND` (kể cả đơn của người khác) |
+| `POST /api/reservations/{id}/cancel` | Chủ đơn hoặc nhân viên | 200 `ReservationOut`; hủy lặp trả lại đơn đã hủy, không đổi `cancelled_at`; 409 nếu đã check-in |
+
+Quy tắc: khoảng ngày `[check_in, check_out)`, không ở quá khứ (giờ UTC+7), tối đa 30 đêm; `adults ≥ 1` và `adults + children ≤ max_guests`. Server chọn phòng vật lý (số phòng nhỏ nhất còn trống) sau khi khóa các phòng ứng viên và đọc lại lịch. Giá đêm được chụp vào `reservation_room.nightly_price`; `line_total = nightly_price × nights`, `total_price` chỉ cộng các dòng chưa hủy. Hủy cập nhật `reservation.status = CANCELLED`, `cancelled_at` và `reservation_room.is_cancelled`, giữ nguyên lịch sử và ghi `audit_event`. Tiền là chuỗi thập phân.
+
+Chưa làm (chỉ ở mức hợp đồng): đơn nhiều phòng, khách đi cùng và một mã giảm giá. Dự kiến thêm `rooms: [{room_type_id, check_in, check_out, adults, children}]`, `guests: [guest_id]` và `discount_code` vào `POST /api/reservations`, khóa phòng theo thứ tự `room_id` để tránh deadlock.
+
+## Endpoint dự kiến cho các tuần sau
+
+Các route dưới đây vẫn là kế hoạch.
 
 | Endpoint dự kiến | Mục đích | Tuần |
 | --- | --- | --- |
-| POST /api/auth/register, POST /api/auth/login | Tài khoản khách và đăng nhập | 2 |
-| GET /api/availability | Tìm phòng theo loại/ngày/số khách | 2 |
-| POST /api/reservations, GET /api/reservations/mine | Đặt và xem đơn của mình | 2 |
-| POST /api/reservations/{id}/cancel | Hủy có kiểm tra quyền | 2 |
 | POST /api/reservations/{id}/check-in | Tạo lượt ở và folio | 3 |
 | GET /api/folios/{id}, POST /api/stays/{id}/check-out | Xem phí và chốt lưu trú | 3 |
 | POST /api/service-orders và thao tác nhận/hoàn thành | Dịch vụ và ghi phí | 4 |
