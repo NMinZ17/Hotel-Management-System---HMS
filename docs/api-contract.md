@@ -94,14 +94,32 @@ Token: gửi header `Authorization: Bearer <access_token>`. Vai trò theo seed: 
 | `POST /api/auth/login` `{email, password}` | Công khai | 200 `{access_token, token_type, expires_in, user}`; 401 sai thông tin; 503 `AUTH_NOT_CONFIGURED` |
 | `GET /api/auth/me` | Đã đăng nhập | 200 `UserOut`; 401 |
 | `GET /api/availability?check_in&check_out&guests=1&room_type_id?` | Công khai | 200 mảng `{room_type, available_rooms, nights, nightly_price, total_price}`; 422 `INVALID_DATES` |
-| `POST /api/reservations` `{room_type_id, check_in, check_out, adults, children=0, note?}` | GUEST | 201 `ReservationOut`; 404 `ROOM_TYPE_NOT_FOUND`; 409 `NO_ROOM_AVAILABLE`; 422 `INVALID_DATES`/`INVALID_GUESTS`; 403 tài khoản nhân viên |
+| `POST /api/reservations` (1 phòng: `{room_type_id, check_in, check_out, adults, children=0, ...}` hoặc nhiều phòng: `{rooms: [...], companion_guest_ids?, discount_code?, note?}`) | GUEST | 201 `ReservationOut`; 404 `ROOM_TYPE_NOT_FOUND`/`GUEST_NOT_FOUND`/`DISCOUNT_NOT_FOUND`; 409 `NO_ROOM_AVAILABLE`; 422 `INVALID_DATES`/`INVALID_GUESTS`/`INVALID_DISCOUNT`; 403 tài khoản nhân viên |
 | `GET /api/reservations/mine` | GUEST | 200 mảng `ReservationOut` |
 | `GET /api/reservations/{id}` | Chủ đơn hoặc nhân viên | 200; 404 `RESERVATION_NOT_FOUND` (kể cả đơn của người khác) |
 | `POST /api/reservations/{id}/cancel` | Chủ đơn hoặc nhân viên | 200 `ReservationOut`; hủy lặp trả lại đơn đã hủy, không đổi `cancelled_at`; 409 nếu đã check-in |
 
-Quy tắc: khoảng ngày `[check_in, check_out)`, không ở quá khứ (giờ UTC+7), tối đa 30 đêm; `adults ≥ 1` và `adults + children ≤ max_guests`. Server chọn phòng vật lý (số phòng nhỏ nhất còn trống) sau khi khóa các phòng ứng viên và đọc lại lịch. Giá đêm được chụp vào `reservation_room.nightly_price`; `line_total = nightly_price × nights`, `total_price` chỉ cộng các dòng chưa hủy. Hủy cập nhật `reservation.status = CANCELLED`, `cancelled_at` và `reservation_room.is_cancelled`, giữ nguyên lịch sử và ghi `audit_event`. Tiền là chuỗi thập phân.
+Quy tắc: khoảng ngày `[check_in, check_out)`, không ở quá khứ (giờ UTC+7), tối đa 30 đêm; `adults ≥ 1` và `adults + children ≤ max_guests`. Server khóa phòng ứng viên theo thứ tự `room_id` tăng dần (tránh deadlock khi đặt nhiều phòng) và chọn phòng vật lý còn trống nguyên tử — thiếu bất kỳ dòng phòng nào sẽ rollback toàn bộ đơn (`409`). Giá đêm được chụp vào `reservation_room.nightly_price`; `line_total = nightly_price × nights`, `subtotal` cộng các dòng chưa hủy, `total_price = subtotal − discount_amount`. Hủy cập nhật `reservation.status = CANCELLED`, `cancelled_at` và `reservation_room.is_cancelled`, giữ nguyên lịch sử và ghi `audit_event`. Tiền là chuỗi thập phân.
 
-Chưa làm (chỉ ở mức hợp đồng): đơn nhiều phòng, khách đi cùng và một mã giảm giá. Dự kiến thêm `rooms: [{room_type_id, check_in, check_out, adults, children}]`, `guests: [guest_id]` và `discount_code` vào `POST /api/reservations`, khóa phòng theo thứ tự `room_id` để tránh deadlock.
+## Tuần 3: check-in, folio, hóa đơn, thanh toán và check-out
+
+Các thao tác nghiệp vụ ghi nhận yêu cầu tài khoản nhân viên (`ADMIN` hoặc `RECEPTION`) có bản ghi `employee` đang hoạt động (`employee_id` được trả thêm trong `UserOut`); khách chỉ được đọc `stay`, `folio`, `invoice` thuộc đơn của chính mình (đơn người khác trả `404`).
+
+| Endpoint | Quyền | Kết quả |
+| --- | --- | --- |
+| `POST /api/reservations/{id}/check-in` | Nhân viên | 200 `StayOut` (gồm `folio_id`, danh sách `rooms`); lặp trên đơn đang `IN_HOUSE` trả lại lượt ở cũ; 409 `ROOM_NOT_CLEAN` / `ROOM_MAINTENANCE_BLOCKED` / `ROOM_OCCUPIED` / `RESERVATION_NOT_CHECKINABLE` / `ALREADY_CHECKED_OUT` |
+| `GET /api/stays/{id}` | Nhân viên hoặc chủ đơn | 200 `StayOut`; 404 `STAY_NOT_FOUND` |
+| `GET /api/folios/{id}` | Nhân viên hoặc chủ đơn | 200 `FolioOut` (danh sách `items`, `subtotal`, `discount_total`, `tax_amount`, `gross_total`, `paid_total`, `balance_due`, `invoice`); 404 `FOLIO_NOT_FOUND` |
+| `POST /api/folios/{id}/invoices` | Nhân viên | 200 `InvoiceOut` (mã `INV-YYYYMM-NNNN`, gọi lặp trả lại hóa đơn hiện hành, tự cập nhật khi folio `OPEN` có thêm phí mới); 404 `FOLIO_NOT_FOUND`; 409 `FOLIO_VOID` / `INVOICE_OVERPAID` |
+| `GET /api/invoices/{id}` | Nhân viên hoặc chủ đơn | 200 `InvoiceOut` kèm `payments`; 404 `INVOICE_NOT_FOUND` |
+| `POST /api/invoices/{id}/payments` `{amount>0, method: "CASH"\|"TRANSFER", transaction_ref?}` | Nhân viên | 200 `{payment, invoice, idempotent_replay}`; lặp cùng `transaction_ref` + `invoice_id` + `amount` + `method` trả lại giao dịch cũ (`idempotent_replay=true`); 409 `OVERPAYMENT` / `INVOICE_ALREADY_PAID` / `DUPLICATE_TRANSACTION_REF` / `INVOICE_VOID` |
+| `POST /api/stays/{id}/check-out` | Nhân viên | 200 `StayOut` (gồm `housekeeping_task_ids`); đóng `folio` (`CLOSED`), cập nhật `stay` & `reservation` (`CHECKED_OUT`), chuyển phòng `housekeeping_status=DIRTY` (giữ nguyên `maintenance_status`), tạo `housekeeping_task` `PENDING`; gọi lặp trả lại lượt ở đã chốt; 409 `PAYMENT_REQUIRED` / `INVOICE_STALE` / `OPEN_SERVICE_ORDERS` |
+
+Công thức tài chính (khớp `database/seeds/06_financial_fixture.sql` và ràng buộc `V002`):
+- Tiền phòng khi check-in ghi `folio_item` (`entry_type='CHARGE'`, `quantity=nights`, `unit_price=nightly_price`, `source_key='ROOM:<reservation_room_id>:<check_in_date>'`).
+- Mã giảm giá của đơn ghi `folio_item` (`entry_type='DISCOUNT'`, `quantity=1`, `unit_price=-discount_amount <= 0`, `source_key='DISC:<reservation_id>:<discount_id>'`), tính lại theo tổng `CHARGE` (`PERCENT` hoặc `FIXED`, không vượt `subtotal`).
+- `net = subtotal - discount_total`; `tax_amount = 8% × net` (làm tròn `ROUND_HALF_UP` đến 2 chữ số thập phân, hoặc lấy tổng các dòng `TAX` tường minh nếu có); `gross_total = net + tax_amount`; `balance_due = gross_total - paid_total`.
+- Kiểm tra phòng trước check-in: `housekeeping_status IN ('CLEAN', 'INSPECTED')` và `maintenance_status = 'OK'` (chặn `DIRTY`, `OUT_OF_SERVICE`, `MINOR_ISSUE`, `OUT_OF_ORDER`, `BLOCKED`).
 
 ## Endpoint dự kiến cho các tuần sau
 
@@ -109,8 +127,6 @@ Các route dưới đây vẫn là kế hoạch.
 
 | Endpoint dự kiến | Mục đích | Tuần |
 | --- | --- | --- |
-| POST /api/reservations/{id}/check-in | Tạo lượt ở và folio | 3 |
-| GET /api/folios/{id}, POST /api/stays/{id}/check-out | Xem phí và chốt lưu trú | 3 |
 | POST /api/service-orders và thao tác nhận/hoàn thành | Dịch vụ và ghi phí | 4 |
 | /api/housekeeping-tasks, /api/maintenance-tickets | Vận hành có kiểm tra phân công | 4 |
 | /api/reports/... | Sáu báo cáo cho admin | 5 |

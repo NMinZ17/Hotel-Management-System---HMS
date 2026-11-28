@@ -6,6 +6,7 @@ from app.config import Settings
 from app.routers.auth import router as auth_router
 from app.routers.reservations import router as reservations_router
 from app.routers.rooms import router as rooms_router
+from app.routers.stays import router as stays_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -36,6 +37,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(rooms_router)
     application.include_router(auth_router)
     application.include_router(reservations_router)
+    application.include_router(stays_router)
     return application
 
 

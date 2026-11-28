@@ -19,6 +19,7 @@ def _user_out(user: CurrentUser) -> UserOut:
         email=user.email,
         roles=sorted(user.roles),
         guest_id=user.guest_id,
+        employee_id=user.employee_id,
         full_name=user.full_name,
     )
 

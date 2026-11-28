@@ -1,0 +1,59 @@
+test_cors_allows_configured_origins (tests.test_week1_api.ApiWithoutDatabaseTests.test_cors_allows_configured_origins) ... ok
+test_cors_rejects_unconfigured_origin (tests.test_week1_api.ApiWithoutDatabaseTests.test_cors_rejects_unconfigured_origin) ... ok
+test_database_failure_returns_safe_503 (tests.test_week1_api.ApiWithoutDatabaseTests.test_database_failure_returns_safe_503) ... Rooms database request failed (ConnectionTimeout)
+ok
+test_health_does_not_require_a_database_connection (tests.test_week1_api.ApiWithoutDatabaseTests.test_health_does_not_require_a_database_connection) ... ok
+test_home_redirects_to_api_documentation (tests.test_week1_api.ApiWithoutDatabaseTests.test_home_redirects_to_api_documentation) ... ok
+test_invalid_filters_are_rejected_before_database_connection (tests.test_week1_api.ApiWithoutDatabaseTests.test_invalid_filters_are_rejected_before_database_connection) ... ok
+test_committed_database_changes_appear_in_following_request (tests.test_week1_api.PostgreSqlRoomsTests.test_committed_database_changes_appear_in_following_request) ... ok
+test_empty_database_returns_empty_array (tests.test_week1_api.PostgreSqlRoomsTests.test_empty_database_returns_empty_array) ... ok
+test_invalid_filters_and_injection_are_rejected (tests.test_week1_api.PostgreSqlRoomsTests.test_invalid_filters_and_injection_are_rejected) ... ok
+test_room_contract_filters_inactive_rows_and_orders_stably (tests.test_week1_api.PostgreSqlRoomsTests.test_room_contract_filters_inactive_rows_and_orders_stably) ... ok
+test_room_type_filter_and_pagination (tests.test_week1_api.PostgreSqlRoomsTests.test_room_type_filter_and_pagination) ... ok
+test_db_failure_on_login_is_safe_503 (tests.test_week2_api.ApiWithoutDatabaseTests.test_db_failure_on_login_is_safe_503) ... Rooms database request failed (ConnectionTimeout)
+ok
+test_login_without_secret_is_a_clear_503 (tests.test_week2_api.ApiWithoutDatabaseTests.test_login_without_secret_is_a_clear_503) ... ok
+test_protected_routes_require_a_token (tests.test_week2_api.ApiWithoutDatabaseTests.test_protected_routes_require_a_token) ... ok
+test_register_db_failure_is_not_success (tests.test_week2_api.ApiWithoutDatabaseTests.test_register_db_failure_is_not_success) ... Write transaction failed (ConnectionTimeout)
+ok
+test_register_requires_phone_with_422_not_503 (tests.test_week2_api.ApiWithoutDatabaseTests.test_register_requires_phone_with_422_not_503) ... ok
+test_validation_happens_before_database (tests.test_week2_api.ApiWithoutDatabaseTests.test_validation_happens_before_database) ... ok
+test_availability_counts_and_filters (tests.test_week2_api.PostgreSqlBookingTests.test_availability_counts_and_filters) ... ok
+test_booking_creates_all_rows_and_snapshots_price (tests.test_week2_api.PostgreSqlBookingTests.test_booking_creates_all_rows_and_snapshots_price) ... ok
+test_cancel_updates_head_and_lines_and_is_idempotent (tests.test_week2_api.PostgreSqlBookingTests.test_cancel_updates_head_and_lines_and_is_idempotent) ... ok
+test_checked_in_reservation_cannot_be_cancelled (tests.test_week2_api.PostgreSqlBookingTests.test_checked_in_reservation_cannot_be_cancelled) ... ok
+test_concurrent_bookings_never_overbook (tests.test_week2_api.PostgreSqlBookingTests.test_concurrent_bookings_never_overbook) ... ok
+test_duplicate_email_and_bad_credentials (tests.test_week2_api.PostgreSqlBookingTests.test_duplicate_email_and_bad_credentials) ... ok
+test_failed_transaction_does_not_report_success_or_write (tests.test_week2_api.PostgreSqlBookingTests.test_failed_transaction_does_not_report_success_or_write) ... Write transaction failed (UndefinedTable)
+ok
+test_invalid_input_is_rejected_without_writes (tests.test_week2_api.PostgreSqlBookingTests.test_invalid_input_is_rejected_without_writes) ... ok
+test_only_owner_reads_and_cancels (tests.test_week2_api.PostgreSqlBookingTests.test_only_owner_reads_and_cancels) ... ok
+test_register_login_me_and_hash_stored (tests.test_week2_api.PostgreSqlBookingTests.test_register_login_me_and_hash_stored) ... ok
+test_register_without_phone_is_422_and_writes_nothing (tests.test_week2_api.PostgreSqlBookingTests.test_register_without_phone_is_422_and_writes_nothing) ... ok
+test_sequential_double_booking_is_rejected (tests.test_week2_api.PostgreSqlBookingTests.test_sequential_double_booking_is_rejected) ... ok
+test_staff_account_cannot_book_and_anonymous_cannot (tests.test_week2_api.PostgreSqlBookingTests.test_staff_account_cannot_book_and_anonymous_cannot) ... ok
+test_date_validation (tests.test_week2_api.PureTests.test_date_validation) ... ok
+test_guest_validation (tests.test_week2_api.PureTests.test_guest_validation) ... ok
+test_password_hash_roundtrip (tests.test_week2_api.PureTests.test_password_hash_roundtrip) ... ok
+test_placeholder_hash_never_verifies (tests.test_week2_api.PureTests.test_placeholder_hash_never_verifies) ... ok
+test_token_rules (tests.test_week2_api.PureTests.test_token_rules) ... ok
+test_checkin_failure_rolls_back_all_tables (tests.test_week3_api.PostgreSqlWeek3Tests.test_checkin_failure_rolls_back_all_tables) ... Write transaction failed (RaiseException)
+ok
+test_checkin_rejects_dirty_and_maintenance_blocked_rooms (tests.test_week3_api.PostgreSqlWeek3Tests.test_checkin_rejects_dirty_and_maintenance_blocked_rooms) ... ok
+test_checkout_blocked_when_service_order_still_in_progress (tests.test_week3_api.PostgreSqlWeek3Tests.test_checkout_blocked_when_service_order_still_in_progress) ... ok
+test_checkout_failure_rolls_back_stay_folio_and_room (tests.test_week3_api.PostgreSqlWeek3Tests.test_checkout_failure_rolls_back_stay_folio_and_room) ... Write transaction failed (RaiseException)
+ok
+test_concurrent_multi_room_bookings_no_deadlock_no_overbook (tests.test_week3_api.PostgreSqlWeek3Tests.test_concurrent_multi_room_bookings_no_deadlock_no_overbook) ... ok
+test_full_lifecycle_matches_financial_fixture_and_idempotency (tests.test_week3_api.PostgreSqlWeek3Tests.test_full_lifecycle_matches_financial_fixture_and_idempotency) ... ok
+test_multi_room_booking_is_atomic_when_one_room_unavailable (tests.test_week3_api.PostgreSqlWeek3Tests.test_multi_room_booking_is_atomic_when_one_room_unavailable) ... ok
+test_rbac_guest_cannot_operate_and_cannot_read_other_guest_folio (tests.test_week3_api.PostgreSqlWeek3Tests.test_rbac_guest_cannot_operate_and_cannot_read_other_guest_folio) ... ok
+test_discount_and_money_rounding (tests.test_week3_api.PureWeek3Tests.test_discount_and_money_rounding) ... ok
+test_payment_request_validation (tests.test_week3_api.PureWeek3Tests.test_payment_request_validation) ... ok
+test_reservation_request_shape_validation (tests.test_week3_api.PureWeek3Tests.test_reservation_request_shape_validation) ... ok
+test_logs_never_leak_database_url_or_password (tests.test_week3_api.Week3ApiWithoutDatabaseTests.test_logs_never_leak_database_url_or_password) ... ok
+test_week3_routes_require_authentication (tests.test_week3_api.Week3ApiWithoutDatabaseTests.test_week3_routes_require_authentication) ... ok
+
+----------------------------------------------------------------------
+Ran 48 tests in 50.332s
+
+OK
