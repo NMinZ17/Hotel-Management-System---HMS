@@ -90,7 +90,7 @@ Token: gửi header `Authorization: Bearer <access_token>`. Vai trò theo seed: 
 
 | Endpoint | Quyền | Kết quả |
 | --- | --- | --- |
-| `POST /api/auth/register` `{email, password≥8, full_name, phone?}` | Công khai | 201 `UserOut`; 409 `EMAIL_TAKEN`; 422 |
+| `POST /api/auth/register` `{email, password≥8, full_name, phone}` | Công khai | 201 `UserOut`; 409 `EMAIL_TAKEN`; 422 thiếu/sai trường (kể cả thiếu `phone`) |
 | `POST /api/auth/login` `{email, password}` | Công khai | 200 `{access_token, token_type, expires_in, user}`; 401 sai thông tin; 503 `AUTH_NOT_CONFIGURED` |
 | `GET /api/auth/me` | Đã đăng nhập | 200 `UserOut`; 401 |
 | `GET /api/availability?check_in&check_out&guests=1&room_type_id?` | Công khai | 200 mảng `{room_type, available_rooms, nights, nightly_price, total_price}`; 422 `INVALID_DATES` |

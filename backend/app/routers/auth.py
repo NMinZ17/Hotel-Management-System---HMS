@@ -60,7 +60,7 @@ def register(body: RegisterRequest, request: Request) -> UserOut:
         connection.execute(
             "INSERT INTO guest (guest_id, user_id, full_name, phone, email) "
             "VALUES (%s, %s, %s, %s, %s)",
-            (guest_id, user_id, body.full_name.strip(), body.phone, email),
+            (guest_id, user_id, body.full_name, body.phone, email),
         )
         user = load_user(connection, user_id)
     return _user_out(user)

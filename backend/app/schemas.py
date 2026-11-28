@@ -34,11 +34,25 @@ Email = Annotated[
 ]
 
 
+# guest.phone and guest.full_name are NOT NULL in Trang's migration V001, so the
+# API requires them and rejects blanks with 422 before any database work.
+FullName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+Phone = Annotated[
+    str,
+    StringConstraints(
+        strip_whitespace=True,
+        min_length=8,
+        max_length=30,
+        pattern=r"^\+?[0-9][0-9 .()-]*[0-9]$",
+    ),
+]
+
+
 class RegisterRequest(BaseModel):
     email: Email
     password: str = Field(min_length=8, max_length=128)
-    full_name: str = Field(min_length=1, max_length=120)
-    phone: str | None = Field(default=None, max_length=30)
+    full_name: FullName
+    phone: Phone
 
 
 class LoginRequest(BaseModel):

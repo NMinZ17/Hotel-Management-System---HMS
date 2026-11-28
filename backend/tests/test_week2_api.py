@@ -119,6 +119,20 @@ class ApiWithoutDatabaseTests(unittest.TestCase):
             self.assertEqual(response.status_code, 422)
             self.assertEqual(response.json()["detail"]["code"], "INVALID_DATES")
 
+    def test_register_requires_phone_with_422_not_503(self):
+        base = {"email": "a@b.co", "password": "longenough", "full_name": "A"}
+        for phone in (None, "", "   ", "abc", "1234", "0900-abc-123", "1" * 31):
+            body = dict(base) if phone is None else {**base, "phone": phone}
+            with self.subTest(phone=phone), self.client() as client:
+                response = client.post("/api/auth/register", json=body)
+                self.assertEqual(response.status_code, 422, response.text)
+                self.assertIn("phone", response.text)
+        with self.client() as client:
+            blank_name = client.post(
+                "/api/auth/register", json={**base, "full_name": "   ", "phone": "0900000001"}
+            )
+        self.assertEqual(blank_name.status_code, 422)
+
     def test_login_without_secret_is_a_clear_503(self):
         with self.client(secret="") as client:
             response = client.post(
@@ -139,7 +153,12 @@ class ApiWithoutDatabaseTests(unittest.TestCase):
         with self.client() as client:
             response = client.post(
                 "/api/auth/register",
-                json={"email": "a@b.co", "password": "longenough", "full_name": "A"},
+                json={
+                    "email": "a@b.co",
+                    "password": "longenough",
+                    "full_name": "A",
+                    "phone": "0900000001",
+                },
             )
         self.assertEqual(response.status_code, 503)
 
@@ -159,6 +178,11 @@ class PostgreSqlBookingTests(unittest.TestCase):
         self.url = make_conninfo(TEST_DATABASE_URL, options="-csearch_path=" + self.schema)
         with psycopg.connect(self.url) as connection:
             connection.execute(SCHEMA_PATH.read_text(encoding="utf-8"))
+            # Mirror the NOT NULL columns of Trang's migration V001 that registration writes.
+            connection.execute(
+                "ALTER TABLE guest ALTER COLUMN phone SET NOT NULL, "
+                "ALTER COLUMN full_name SET NOT NULL"
+            )
             connection.execute(SEED)
         self.client = TestClient(create_app(Settings(database_url=self.url, auth_secret=SECRET)))
         self.client.__enter__()
@@ -168,7 +192,12 @@ class PostgreSqlBookingTests(unittest.TestCase):
     def register_and_login(self, email="guest@example.com"):
         r = self.client.post(
             "/api/auth/register",
-            json={"email": email, "password": "password123", "full_name": "Khach Test"},
+            json={
+                "email": email,
+                "password": "password123",
+                "full_name": "Khach Test",
+                "phone": "0900 000 001",
+            },
         )
         self.assertEqual(r.status_code, 201, r.text)
         r = self.client.post("/api/auth/login", json={"email": email, "password": "password123"})
@@ -202,11 +231,26 @@ class PostgreSqlBookingTests(unittest.TestCase):
         self.assertTrue(stored.startswith("scrypt$"))
         self.assertNotIn("password123", stored)
 
+    def test_register_without_phone_is_422_and_writes_nothing(self):
+        body = {"email": "nophone@example.com", "password": "password123", "full_name": "Khach"}
+        missing = self.client.post("/api/auth/register", json=body)
+        self.assertEqual(missing.status_code, 422, missing.text)
+        self.assertEqual(self.scalar("SELECT count(*) FROM app_user WHERE email = %s", body["email"]), 0)
+        self.assertEqual(self.scalar("SELECT count(*) FROM guest"), 0)
+        ok = self.client.post("/api/auth/register", json={**body, "phone": " +84 900 000 001 "})
+        self.assertEqual(ok.status_code, 201, ok.text)
+        self.assertEqual(self.scalar("SELECT phone FROM guest"), "+84 900 000 001")
+
     def test_duplicate_email_and_bad_credentials(self):
         self.register_and_login()
         dup = self.client.post(
             "/api/auth/register",
-            json={"email": "GUEST@example.com", "password": "password123", "full_name": "X"},
+            json={
+                "email": "GUEST@example.com",
+                "password": "password123",
+                "full_name": "X",
+                "phone": "0900000002",
+            },
         )
         self.assertEqual(dup.status_code, 409)
         self.assertEqual(dup.json()["detail"]["code"], "EMAIL_TAKEN")
